@@ -239,28 +239,27 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
 
     // ── Market presence dots (112 points) ──
     for (const m of SIMULATED_MARKETS) {
-      // Colors MUST be bright enough to contrast against the dark night-earth texture.
-      // Previous attempts with muted teal (#4d9e87) blended into the ocean.
-      // Altitude must be high enough for dots to float visibly above the surface.
+      // On Retina Mac displays, pointRadius 0.5 = ~2px (invisible).
+      // Need radius 1.5+ to be clearly visible as a global footprint.
       let color: string;
       let rad: number;
       let alt: number;
 
       switch (m.marketTier) {
         case "critical_market":
-          color = "#5be0a8";  // bright green — stands out sharply
-          rad = 0.7;
-          alt = 0.035;
+          color = "#5be0a8";  // bright green
+          rad = 2.0;
+          alt = 0.012;
           break;
         case "support_market":
-          color = "#36d6e7";  // bright cyan — matches brand, highly visible
-          rad = 0.5;
-          alt = 0.028;
+          color = "#36d6e7";  // bright cyan
+          rad = 1.5;
+          alt = 0.01;
           break;
         default: // country_presence
-          color = "#7ee0c0";  // teal — bright enough to see on dark globe
-          rad = 0.55;
-          alt = 0.025;
+          color = "#7ee0c0";  // teal
+          rad = 1.6;
+          alt = 0.008;
           break;
       }
 
@@ -281,16 +280,16 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
 
       if (isCritical) {
         color = COLORS.red;
-        rad = m.marketTier === "critical_market" ? 0.8 : 0.65;
-        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.red), maxR: 2.8, speed: 1.8, period: 1000 });
+        rad = m.marketTier === "critical_market" ? 2.2 : 1.8;
+        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.red), maxR: 3.5, speed: 1.8, period: 1000 });
       } else if (isDegraded) {
         color = COLORS.amber;
-        rad = m.marketTier === "critical_market" ? 0.75 : 0.6;
+        rad = m.marketTier === "critical_market" ? 2.0 : 1.6;
         if (m.marketTier === "critical_market") {
-          rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.amber), maxR: 2.2, speed: 1.2, period: 1500 });
+          rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.amber), maxR: 3.0, speed: 1.2, period: 1500 });
         }
       } else if (!scenario && (m.marketTier === "critical_market")) {
-        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("#5be0a8"), maxR: 2.0, speed: 0.8, period: 2500 });
+        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("#5be0a8"), maxR: 2.5, speed: 0.8, period: 2500 });
       }
 
       points.push({

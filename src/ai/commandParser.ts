@@ -9,6 +9,11 @@ export function parseCommand(raw: string): CopilotCommand {
   const has = (...ks: string[]) => ks.some((k) => q.includes(k));
   const sim = has("simulate", "simular", "run", "ejecuta");
 
+  // Agentic Actions
+  if (has("mitig", "resolv", "arregl", "fix", "solve", "aisla", "conside", "contain")) {
+    return { id: "action" };
+  }
+
   if (has("multi") || (has("openai") && has("claude"))) return { id: "sim", scenario: "multi_ai" };
   if (has("openai", "chatgpt", "gpt")) return { id: "sim", scenario: "openai_outage" };
   if (has("github") || (has("copilot") && has("cod"))) return { id: "sim", scenario: "copilot_outage" };

@@ -17,8 +17,19 @@ export async function runCopilot(
   text: string,
   lang: Language,
   ctx: CopilotContext,
-): Promise<CopilotResult> {
+): Promise<CopilotResult & { action?: string }> {
   const command = parseCommand(text);
+
+  // 0) Agentic Action
+  if (command.id === "action") {
+    return { 
+      command, 
+      action: "clear_scenario",
+      note: lang === "es" 
+        ? "✅ Acción de mitigación ejecutada. Aislamiento de red activo y el escenario de crisis ha sido resuelto." 
+        : "✅ Mitigation action executed. Network isolation is active and the crisis scenario has been resolved." 
+    };
+  }
 
   // 1) Simulation intents: resolve the scenario report and ask the app to
   //    apply it via `scenarioId`.

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useCommandCenterStore, useMetrics } from "../../store/useCommandCenterStore";
 import { globalStatus } from "../../engine/riskEngine";
 import { t } from "../../i18n";
@@ -14,6 +15,14 @@ export function TopBar() {
   const status = globalStatus(metrics);
   const dotClass =
     status === "critical" ? "red pulse" : status === "elevated" ? "amber pulse" : "green";
+
+  useEffect(() => {
+    if (status === "critical") {
+      document.body.classList.add("theme-critical");
+    } else {
+      document.body.classList.remove("theme-critical");
+    }
+  }, [status]);
 
   return (
     <div className="topbar">
@@ -37,6 +46,22 @@ export function TopBar() {
 
       <div className="statusline">
         <div className="demo-badge">{t("demoMode", lang)}</div>
+        <button 
+          className={"icon-btn" + (useCommandCenterStore(s => s.perfMode) === "low" ? " on" : "")} 
+          title="Performance Mode" 
+          aria-label="Toggle Performance Mode"
+          onClick={useCommandCenterStore(s => s.togglePerfMode)}
+        >
+          {useCommandCenterStore(s => s.perfMode) === "high" ? "⚡️" : "🔋"}
+        </button>
+        <button 
+          className={"icon-btn" + (useCommandCenterStore(s => s.zenMode) ? " on" : "")} 
+          title="Zen Mode" 
+          aria-label="Toggle Zen Mode"
+          onClick={useCommandCenterStore(s => s.toggleZenMode)}
+        >
+          {useCommandCenterStore(s => s.zenMode) ? "▣" : "▤"}
+        </button>
         <div className="lang-toggle">
           <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>
             EN

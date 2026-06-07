@@ -34,6 +34,7 @@ export function AICopilot() {
   const open = useCommandCenterStore((s) => s.copilotOpen);
   const toggle = useCommandCenterStore((s) => s.toggleCopilot);
   const runScenario = useCommandCenterStore((s) => s.runScenario);
+  const clearScenario = useCommandCenterStore((s) => s.clearScenario);
   const scenario = useScenario();
   const metrics = useMetrics();
   const signals = useDataSourceStore((s) => s.signals);
@@ -42,6 +43,17 @@ export function AICopilot() {
   const [messages, setMessages] = useState<CopilotMessage[]>([{ from: "bot", text: greeting }]);
   const [typing, setTyping] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
+  
+  const proactiveAlert = useCommandCenterStore((s) => s.proactiveAlert);
+  const setProactiveAlert = useCommandCenterStore((s) => s.setProactiveAlert);
+
+  /* Proactive AI alerts */
+  useEffect(() => {
+    if (proactiveAlert) {
+      setMessages((m) => [...m, { from: "bot", text: proactiveAlert }]);
+      setProactiveAlert(null); // Clear after displaying
+    }
+  }, [proactiveAlert, setProactiveAlert]);
 
   /* Refresh the greeting when language changes (only if untouched). */
   useEffect(() => {
@@ -65,6 +77,7 @@ export function AICopilot() {
       if (err) console.error("LLM Agent failed, falling back:", err);
       const result = await runCopilot(trimmed, lang, { metrics, scenario });
       if (result.scenarioId) runScenario(result.scenarioId);
+      if ((result as any).action === "clear_scenario") clearScenario();
       setMessages((m) => [
         ...m,
         result.report

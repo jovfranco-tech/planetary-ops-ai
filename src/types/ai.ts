@@ -4,6 +4,7 @@ import type { Scenario } from "./scenarios";
 /** All intents the deterministic copilot can resolve. */
 export type CopilotIntentId =
   | "sim" // run a scenario simulation
+  | "action" // agentic action
   | "claude"
   | "deps_mx"
   | "exposed"

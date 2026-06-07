@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Globe, { type GlobeMethods } from "react-globe.gl";
-import { useCommandCenterStore, useScenario } from "../../store/useCommandCenterStore";
+import { useCommandCenterStore } from "../../store/useCommandCenterStore";
 import { GLOBE_BUMP_URL, GLOBE_TEXTURE_URL, INITIAL_POV } from "../../utils/constants";
 import { projectGlobe } from "../../engine/globeProjection";
 import { projectLiveGlobe } from "../../engine/liveGlobeProjection";
+import { getScenario } from "../../engine/scenarioEngine";
 import { OrbitLayer } from "./OrbitLayer";
 import { DataModeLegend } from "./DataModeLegend";
 import { EnterpriseFootprintOverlay } from "./EnterpriseFootprintOverlay";
@@ -40,7 +41,10 @@ export function CommandGlobe() {
   const layers = useCommandCenterStore((s) => s.layers);
   const lang = useCommandCenterStore((s) => s.lang);
   const focusRequest = useCommandCenterStore((s) => s.focusRequest);
-  const scenario = useScenario();
+  const scenarioId = useCommandCenterStore((s) => s.appliedScenarioId);
+  const perfMode = useCommandCenterStore((s) => s.perfMode);
+  const selectedNode = useCommandCenterStore((s) => s.selectedNode);
+  const scenario = useMemo(() => getScenario(scenarioId), [scenarioId]);
 
   const hostRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<GlobeMethods | undefined>(undefined);
@@ -140,8 +144,8 @@ export function CommandGlobe() {
             rendererConfig={{ antialias: true, alpha: true, preserveDrawingBuffer: true }}
             backgroundColor="rgba(0,0,0,0)"
             globeImageUrl={GLOBE_TEXTURE_URL}
-            bumpImageUrl={GLOBE_BUMP_URL}
-            showAtmosphere
+            bumpImageUrl={perfMode === "high" ? GLOBE_BUMP_URL : undefined}
+            showAtmosphere={perfMode === "high"}
             atmosphereColor="#5fb0ff"
             atmosphereAltitude={0.3}
             /* points */
@@ -151,11 +155,39 @@ export function CommandGlobe() {
             pointAltitude="alt"
             pointRadius="rad"
             pointColor="color"
-            pointResolution={18}
+            pointResolution={perfMode === "high" ? 18 : 6}
             pointsTransitionDuration={500}
             pointLabel="tip"
+            onPointClick={(pt: any) => {
+              useCommandCenterStore.getState().setSelectedNode({
+                lat: pt.lat,
+                lng: pt.lng,
+                name: pt.name || "Unknown Node",
+                region: pt.region || "Global",
+              });
+            }}
+            /* HTML Elements for tooltips and labels */
+            htmlElementsData={[...data.labels, ...([selectedNode].filter(Boolean) as any[])]}
+            htmlLat="lat"
+            htmlLng="lng"
+            htmlAltitude="halt"
+            htmlElement={(d: any) => {
+              if (d.name) {
+                // Tooltip
+                const el = document.createElement("div");
+                el.innerHTML = `
+                  <div style="background: rgba(10,16,30,0.85); border: 1px solid var(--stroke-2); backdrop-filter: blur(8px); padding: 10px 14px; border-radius: 8px; font-family: var(--font); color: white; min-width: 160px; text-align: left; transform: translate(-50%, -100%); pointer-events: none;">
+                    <div style="font-weight: 600; font-size: 13px; margin-bottom: 4px;">${d.name}</div>
+                    <div style="font-size: 9px; color: var(--amber); letter-spacing: 0.1em; text-transform: uppercase;">${d.region}</div>
+                  </div>
+                `;
+                return el;
+              } else {
+                return buildLabelEl(d);
+              }
+            }}
             /* arcs */
-            arcsData={combinedArcs}
+            arcsData={perfMode === "high" ? combinedArcs : []}
             arcColor="color"
             arcStroke="stroke"
             arcDashLength="dashLen"
@@ -164,17 +196,11 @@ export function CommandGlobe() {
             arcAltitudeAutoScale={0.42}
             arcsTransitionDuration={400}
             /* rings */
-            ringsData={combinedRings}
+            ringsData={perfMode === "high" ? combinedRings : []}
             ringColor="ringColor"
             ringMaxRadius="maxR"
             ringPropagationSpeed="speed"
             ringRepeatPeriod="period"
-            /* html labels */
-            htmlElementsData={data.labels}
-            htmlLat="lat"
-            htmlLng="lng"
-            htmlAltitude="halt"
-            htmlElement={buildLabelEl}
           />
         )}
       </div>

@@ -33,6 +33,19 @@
   --mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
+body.theme-critical {
+  --bg:        #120404;
+  --bg-2:      #1a0707;
+  --panel:     rgba(33, 11, 11, 0.62);
+  --panel-2:   rgba(28, 9, 9, 0.86);
+  --solid:     #1f0a0a;
+  --stroke:    rgba(224, 120, 120, 0.18);
+  --stroke-2:  rgba(224, 120, 120, 0.35);
+  
+  --cyan:   #ff5d6c; /* Swap cyan accents for red */
+  --teal:   #f6b13e; /* Swap teal accents for amber */
+}
+
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
 body {
@@ -543,6 +556,17 @@ body {
 
 @media (max-width: 1320px) {
   .body { grid-template-columns: 224px minmax(0,1fr) 332px; }
+}
+
+@media (max-width: 1024px) {
+  .body { 
+    grid-template-columns: 1fr; 
+    grid-template-rows: auto 500px auto auto;
+    overflow-y: auto; 
+    overflow-x: hidden;
+  }
+  .stage { min-height: 500px; }
+  .col-left, .col-right, .decision-bar { height: auto; }
 }
 
 /* ============================ DATA SOURCE HEALTH ============================ */

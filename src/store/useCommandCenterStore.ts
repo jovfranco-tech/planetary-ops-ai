@@ -25,6 +25,14 @@ export interface FocusRequest {
   ts: number;
 }
 
+export interface SelectedNode {
+  lat: number;
+  lng: number;
+  name: string;
+  type?: string;
+  region?: string;
+}
+
 interface CommandCenterState {
   /* ---- state ---- */
   lang: Language;
@@ -33,6 +41,10 @@ interface CommandCenterState {
   copilotOpen: boolean;
   showDisclaimer: boolean;
   focusRequest: FocusRequest | null;
+  zenMode: boolean;
+  perfMode: "high" | "low";
+  proactiveAlert: string | null;
+  selectedNode: SelectedNode | null;
 
   /* ---- actions ---- */
   setLang: (lang: Language) => void;
@@ -45,6 +57,10 @@ interface CommandCenterState {
   setCopilotOpen: (open: boolean) => void;
   openDisclaimer: () => void;
   closeDisclaimer: () => void;
+  toggleZenMode: () => void;
+  togglePerfMode: () => void;
+  setProactiveAlert: (msg: string | null) => void;
+  setSelectedNode: (node: SelectedNode | null) => void;
 }
 
 export const useCommandCenterStore = create<CommandCenterState>((set) => ({
@@ -54,6 +70,10 @@ export const useCommandCenterStore = create<CommandCenterState>((set) => ({
   copilotOpen: false,
   showDisclaimer: false,
   focusRequest: null,
+  zenMode: false,
+  perfMode: "high",
+  proactiveAlert: null,
+  selectedNode: null,
 
   setLang: (lang) => {
     if (typeof localStorage !== "undefined") localStorage.setItem(LANG_KEY, lang);
@@ -93,6 +113,10 @@ export const useCommandCenterStore = create<CommandCenterState>((set) => ({
   openDisclaimer: () => set({ showDisclaimer: true }),
 
   closeDisclaimer: () => set({ showDisclaimer: false }),
+  toggleZenMode: () => set((state) => ({ zenMode: !state.zenMode })),
+  togglePerfMode: () => set((state) => ({ perfMode: state.perfMode === "high" ? "low" : "high" })),
+  setProactiveAlert: (msg) => set({ proactiveAlert: msg }),
+  setSelectedNode: (node) => set({ selectedNode: node }),
 }));
 
 /* ------------------------------------------------------------------ */

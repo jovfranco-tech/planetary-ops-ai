@@ -4,6 +4,7 @@ import type { Scenario } from "../types/scenarios";
 import { COLORS, KIND_COLOR } from "../utils/constants";
 import { DR_PATHS, KEY_LABELS, NODES, ROUTES, nodeById } from "../data";
 import { SIMULATED_HUBS, SIMULATED_MARKETS } from "../data/footprint";
+import { evaluateFootprintImpact } from "./scenarioRules";
 import { ringFade } from "../utils/geo";
 
 /* ------------------------------------------------------------------ */
@@ -18,6 +19,8 @@ export interface GlobePoint {
   alt: number;
   rad: number;
   tip: string;
+  name?: string;
+  region?: string;
 }
 
 export interface GlobeRing {
@@ -231,11 +234,6 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
   }
 
   if (layers.has("enterprise-footprint")) {
-    const isCableCut = scenario?.id === "cable_cut";
-    const isRansomware = scenario?.id === "ransomware";
-    const isCloud = scenario?.id === "useast_cloud";
-    const isAi = scenario?.id === "openai_outage" || scenario?.id === "copilot_outage" || scenario?.id === "multi_ai";
-    const isIdp = scenario?.id === "idp_outage";
 
     // ── Market presence dots (112 points) ──
     for (const m of SIMULATED_MARKETS) {
@@ -263,19 +261,7 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
       }
 
       // ── Scenario integrations ──
-      const inLatam = m.region === "LATAM";
-      const isCloudDep = m.dependencyProfile === "cloud" || m.dependencyProfile === "analytics";
-      const isAiDep = m.dependencyProfile === "ai";
-      const isIdpDep = m.dependencyProfile === "identity";
-
-      let isDegraded = false;
-      let isCritical = false;
-
-      if (isCableCut && inLatam) isDegraded = true;
-      if (isRansomware && inLatam) isCritical = true;
-      if (isCloud && (m.region === "North America" || isCloudDep)) isDegraded = true;
-      if (isAi && isAiDep) isDegraded = true;
-      if (isIdp && isIdpDep) isCritical = true;
+      const { isCritical, isDegraded } = evaluateFootprintImpact(scenario?.id, m);
 
       if (isCritical) {
         color = COLORS.red;
@@ -299,6 +285,8 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
         alt,
         rad,
         tip: tip(m.countryName, m.marketTier.replace("_", " ")),
+        name: m.countryName,
+        region: m.region,
       });
     }
 
@@ -307,19 +295,7 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
       let color: string = COLORS.cyan;
       let state: GlobeLabel["state"] = "";
 
-      const inLatam = h.region === "LATAM";
-      const isCloudDep = h.dependencyProfile === "cloud";
-      const isAiDep = h.dependencyProfile === "ai";
-      const isIdpDep = h.dependencyProfile === "identity";
-
-      let isDegraded = false;
-      let isCritical = false;
-
-      if (isCableCut && inLatam) isDegraded = true;
-      if (isRansomware && inLatam) isCritical = true;
-      if (isCloud && (h.region === "North America" || isCloudDep)) isDegraded = true;
-      if (isAi && isAiDep) isDegraded = true;
-      if (isIdp && isIdpDep) isCritical = true;
+      const { isCritical, isDegraded } = evaluateFootprintImpact(scenario?.id, h);
 
       if (isCritical) {
         color = COLORS.red;
@@ -342,6 +318,8 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
         alt: 0.04,
         rad: 3.5,
         tip: tip(h.name, "REGIONAL HUB"),
+        name: h.name,
+        region: h.region,
       });
 
       labels.push({ lat: h.lat, lng: h.lng, halt: 0.09, text: h.name, state });

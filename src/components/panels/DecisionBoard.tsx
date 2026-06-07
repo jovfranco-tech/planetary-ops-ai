@@ -1,12 +1,10 @@
 import { useState } from "react";
 import type { Language } from "../../types/i18n";
-import type { DecisionOption, DecisionOptionId } from "../../types/scenarios";
+import type { DecisionOption } from "../../types/scenarios";
 import { useCommandCenterStore, useScenario, useMetrics } from "../../store/useCommandCenterStore";
 import {
   GHOST_OPTIONS,
   type GhostOption,
-  automationLabel,
-  nextActionLabel,
   recommendedOptionId,
 } from "../../engine/decisionEngine";
 import { generateBoardBrief } from "../../engine/briefingEngine";
@@ -15,57 +13,37 @@ import { buildMarkdownSnapshot } from "../../utils/markdownExport";
 import { useDataSourceStore } from "../../dataSources/useDataSources";
 import { t, tv } from "../../i18n";
 
-function autoClassFor(id: DecisionOptionId): string {
-  return id === "A" ? "approval-no" : id === "C" ? "approval-yes" : "";
-}
+
 
 function GhostCard({ o, lang }: { o: GhostOption; lang: Language }) {
   return (
     <div className={"dcard ghostcard" + (o.recommended ? " rec" : "")}>
-      <div className="dcard-top">
-        <div className="dcard-letter">{o.id}</div>
-        <div className="dcard-label">{t(o.labelKey, lang)}</div>
-        {o.recommended && <span className="rec-tag">{t("recBadge", lang)}</span>}
-      </div>
-      <div className="dcard-rr">
-        <div className="dm-k">{t("riskReduction", lang)}</div>
-        <div className="rr-line">
-          <span className="rr-num" style={{ fontSize: 15 }}>
-            {tv(o.riskReduction, lang)}
-          </span>
-          <div className="rr-bar">
-            <i style={{ width: o.bar + "%", opacity: 0.7 }} />
+      <div style={{ display: "flex", gap: "12px", height: "100%" }}>
+        <div style={{ flex: "0 0 42px", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+          <div className="dcard-letter">{o.id}</div>
+          {o.recommended && <span className="rec-tag" style={{ padding: "3px 6px", fontSize: "7px" }}>{t("recBadge", lang)}</span>}
+        </div>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <div className="dcard-label" style={{ marginBottom: "12px" }}>{t(o.labelKey, lang)}</div>
+          
+          <div className="dcard-strip" style={{ borderTop: "none", paddingTop: 0, marginTop: "auto", gridTemplateColumns: "1fr 1fr" }}>
+            <div className="ds">
+              <div className="k">{t("riskReduction", lang)}</div>
+              <div className="v" style={{ fontSize: "14px", color: "var(--text)" }}>{tv(o.riskReduction, lang)}</div>
+            </div>
+            <div className="ds">
+              <div className="k">{t("speed", lang)}</div>
+              <div className="v">{tv(o.speed, lang)}</div>
+            </div>
+            <div className="ds">
+              <div className="k">{t("businessImpact", lang)}</div>
+              <div className="v">{tv(o.impact, lang)}</div>
+            </div>
+            <div className="ds">
+              <div className="k">{t("approvalReq", lang)}</div>
+              <div className={"v " + (o.approval ? "approval-yes" : "approval-no")}>{o.approval ? t("yes", lang) : t("no", lang)}</div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="dcard-strip">
-        <div className="ds">
-          <div className="k">{t("residualRisk", lang)}</div>
-          <div className="v">{tv(o.residual, lang)}</div>
-        </div>
-        <div className="ds">
-          <div className="k">{t("speed", lang)}</div>
-          <div className="v">{tv(o.speed, lang)}</div>
-        </div>
-        <div className="ds">
-          <div className="k">{t("businessImpact", lang)}</div>
-          <div className="v">{tv(o.impact, lang)}</div>
-        </div>
-        <div className="ds">
-          <div className="k">{t("approvalReq", lang)}</div>
-          <div className={"v " + (o.approval ? "approval-yes" : "approval-no")}>
-            {o.approval ? t("yes", lang) : t("no", lang)}
-          </div>
-        </div>
-      </div>
-      <div className="dcard-foot2">
-        <div className="ds">
-          <div className="k">{t("aiAutomation", lang)}</div>
-          <div className={"v " + autoClassFor(o.id)}>{automationLabel(o.id, lang)}</div>
-        </div>
-        <div className="ds nextcell">
-          <div className="k">{t("recBadge", lang)}</div>
-          <div className="v nextval">{tv(o.note, lang)}</div>
         </div>
       </div>
     </div>
@@ -75,48 +53,32 @@ function GhostCard({ o, lang }: { o: GhostOption; lang: Language }) {
 function DecisionCard({ o, rec, lang }: { o: DecisionOption; rec: boolean; lang: Language }) {
   return (
     <div className={"dcard" + (rec ? " rec" : "")}>
-      <div className="dcard-top">
-        <div className="dcard-letter">{o.id}</div>
-        <div className="dcard-label">{tv(o.label, lang)}</div>
-        {rec && <span className="rec-tag">{t("recBadge", lang)}</span>}
-      </div>
-      <div className="dcard-rr">
-        <div className="dm-k">{t("riskReduction", lang)}</div>
-        <div className="rr-line">
-          <span className="rr-num">{o.riskReduction}%</span>
-          <div className="rr-bar">
-            <i style={{ width: o.riskReduction + "%" }} />
+      <div style={{ display: "flex", gap: "12px", height: "100%" }}>
+        <div style={{ flex: "0 0 42px", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+          <div className="dcard-letter">{o.id}</div>
+          {rec && <span className="rec-tag" style={{ padding: "3px 6px", fontSize: "7px" }}>{t("recBadge", lang)}</span>}
+        </div>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <div className="dcard-label" style={{ marginBottom: "12px" }}>{tv(o.label, lang)}</div>
+          
+          <div className="dcard-strip" style={{ borderTop: "none", paddingTop: 0, marginTop: "auto", gridTemplateColumns: "1fr 1fr" }}>
+            <div className="ds">
+              <div className="k">{t("riskReduction", lang)}</div>
+              <div className="v" style={{ fontSize: "14px", color: "var(--text)" }}>{o.riskReduction}%</div>
+            </div>
+            <div className="ds">
+              <div className="k">{t("speed", lang)}</div>
+              <div className="v">{o.speed}</div>
+            </div>
+            <div className="ds">
+              <div className="k">{t("businessImpact", lang)}</div>
+              <div className="v">{o.businessImpact}</div>
+            </div>
+            <div className="ds">
+              <div className="k">{t("approvalReq", lang)}</div>
+              <div className={"v " + (o.humanApproval ? "approval-yes" : "approval-no")}>{o.humanApproval ? t("yes", lang) : t("no", lang)}</div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="dcard-strip">
-        <div className="ds">
-          <div className="k">{t("residualRisk", lang)}</div>
-          <div className="v">{o.residualRisk}</div>
-        </div>
-        <div className="ds">
-          <div className="k">{t("speed", lang)}</div>
-          <div className="v">{o.speed}</div>
-        </div>
-        <div className="ds">
-          <div className="k">{t("businessImpact", lang)}</div>
-          <div className="v">{o.businessImpact}</div>
-        </div>
-        <div className="ds">
-          <div className="k">{t("approvalReq", lang)}</div>
-          <div className={"v " + (o.humanApproval ? "approval-yes" : "approval-no")}>
-            {o.humanApproval ? t("yes", lang) : t("no", lang)}
-          </div>
-        </div>
-      </div>
-      <div className="dcard-foot2">
-        <div className="ds">
-          <div className="k">{t("aiAutomation", lang)}</div>
-          <div className={"v " + autoClassFor(o.id)}>{automationLabel(o.id, lang)}</div>
-        </div>
-        <div className="ds nextcell">
-          <div className="k">{t("nextActionL", lang)}</div>
-          <div className="v nextval">{nextActionLabel(o.id, lang)}</div>
         </div>
       </div>
     </div>

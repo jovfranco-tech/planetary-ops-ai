@@ -104,6 +104,13 @@ export const useCommandCenterStore = create<CommandCenterState>((set) => ({
     const focusId = focusNodeFor(scenario);
     const node = focusId ? nodeById(focusId) : undefined;
     if (node) set({ focusRequest: { lat: node.lat, lng: node.lng, ts: Date.now() } });
+    
+    // Memory integration
+    if (scenario) {
+      import("./useMemoryStore").then(({ useMemoryStore }) => {
+        useMemoryStore.getState().addIncident(id, scenario.title.en);
+      });
+    }
   },
 
   clearScenario: () =>

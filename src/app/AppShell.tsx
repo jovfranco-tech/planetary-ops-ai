@@ -10,6 +10,7 @@ import { AIResiliencePanel } from "../components/panels/AIResiliencePanel";
 import { ScenarioTimeline } from "../components/panels/ScenarioTimeline";
 import { DecisionBoard } from "../components/panels/DecisionBoard";
 import { DemoDisclaimer } from "../components/panels/DemoDisclaimer";
+import { AIDebateRoom } from "../components/panels/AIDebateRoom";
 import { AICopilot } from "../components/copilot/AICopilot";
 import { LiveFeedMonitor } from "../components/ai/LiveFeedMonitor";
 
@@ -145,6 +146,7 @@ export function AppShell() {
             >
               <ExecutiveWarRoom />
               <AIResiliencePanel />
+              <AIDebateRoom />
             </motion.div>
           )}
         </AnimatePresence>

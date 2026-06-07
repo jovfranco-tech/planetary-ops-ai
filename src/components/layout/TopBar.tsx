@@ -75,6 +75,15 @@ export function TopBar() {
           👁️
         </button>
         <button 
+          className="icon-btn" 
+          title="Export Report" 
+          aria-label="Export PDF Report"
+          onMouseEnter={playHover}
+          onClick={() => { playClick(); window.print(); }}
+        >
+          🖨️
+        </button>
+        <button 
           className={"icon-btn" + (useCommandCenterStore(s => s.zenMode) ? " on" : "")} 
           title="Zen Mode" 
           aria-label="Toggle Zen Mode"

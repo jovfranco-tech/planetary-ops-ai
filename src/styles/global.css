@@ -707,3 +707,76 @@ body {
   color: var(--red);
 }
 
+/* ==========================================================================
+   PRINT MODE (Military Report Export)
+   ========================================================================== */
+@media print {
+  body, html {
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Hide non-report elements */
+  .globe-host, .top-bar, .footer, .cop-scrim, .ai-copilot, .camera-container, .stage-scan {
+    display: none !important;
+  }
+
+  /* Reset layout for document flow */
+  .app {
+    display: block !important;
+    padding: 0 !important;
+  }
+
+  .body {
+    display: block !important;
+    position: static !important;
+    padding: 20px !important;
+  }
+
+  .col-left, .col-right, .decision-bar {
+    position: static !important;
+    width: 100% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid #ccc !important;
+    margin-bottom: 20px !important;
+    page-break-inside: avoid;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .panel-box, .glass, .scenario-timeline-panel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: black !important;
+    backdrop-filter: none !important;
+  }
+
+  .metric-card, .event-card, .threat-card {
+    background: #f4f4f4 !important;
+    border: 1px solid #ddd !important;
+    color: black !important;
+    page-break-inside: avoid;
+  }
+
+  .glitch-text {
+    animation: none !important;
+    text-shadow: none !important;
+    color: black !important;
+  }
+
+  /* Replace neon colors with high-contrast print colors */
+  * {
+    --text: black !important;
+    --muted: #444 !important;
+    --faint: #666 !important;
+    --stroke: #ccc !important;
+    --stroke-2: #aaa !important;
+    --bg: white !important;
+    --bg-2: white !important;
+    --panel: transparent !important;
+    --panel-2: transparent !important;
+  }
+}

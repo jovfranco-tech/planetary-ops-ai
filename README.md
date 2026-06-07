@@ -10,6 +10,22 @@ A portfolio-grade, single-page command center that renders global digital infras
 
 ---
 
+## 📸 Premium Showcase (Portfolio Screenshots)
+
+> **Note to developer**: Replace the placeholder image paths below with your actual high-resolution screenshots. 
+
+### 1. Planetary Command Center (Nominal State)
+![Global Command Center Overview - 3D Globe](public/screenshots/01-home-globe.png)
+
+### 2. Active Crisis Scenario (AI Provider Degraded)
+![Active Scenario - AI Provider Degraded Simulation](public/screenshots/02-active-scenario.png)
+
+### 3. AI Dependency Resilience & Fallback
+![AI Dependency Resilience Panel - Fallback Readiness](public/screenshots/03-ai-resilience.png)
+
+### 4. Executive Snapshot & Decision Board
+![Executive Snapshot and Decision Board Export](public/screenshots/04-executive-snapshot.png)
+
 ## Why this exists
 
 Most "ops dashboards" stop at telemetry. This project models the layer above telemetry — **executive crisis decisioning** — and treats **AI services as critical infrastructure** alongside cables, cloud and identity. The differentiators are provider-concentration risk, multi-model fallback strategy, and responsible-AI governance (human-in-the-loop, sensitivity gating) made visible at board level.

@@ -62,24 +62,6 @@ export function TopBar() {
       <div className="statusline">
         <div className="demo-badge">{t("demoMode", lang)}</div>
         <button 
-          className={"icon-btn" + (useCommandCenterStore(s => s.perfMode) === "low" ? " on" : "")} 
-          title="Performance Mode" 
-          aria-label="Toggle Performance Mode"
-          onMouseEnter={playHover}
-          onClick={() => { playClick(); useCommandCenterStore.getState().togglePerfMode(); }}
-        >
-          {useCommandCenterStore(s => s.perfMode) === "high" ? "⚡️" : "🔋"}
-        </button>
-        <button 
-          className={"icon-btn" + (useCommandCenterStore(s => s.thermalMode) ? " on" : "")} 
-          title="Thermal Vision" 
-          aria-label="Toggle Thermal Vision"
-          onMouseEnter={playHover}
-          onClick={() => { playClick(); useCommandCenterStore.getState().toggleThermalMode(); }}
-        >
-          🌡️
-        </button>
-        <button 
           className={"icon-btn" + (useCommandCenterStore(s => s.colorBlindMode) ? " on" : "")} 
           title="Colorblind Safe Mode" 
           aria-label="Toggle Colorblind Mode"
@@ -102,7 +84,7 @@ export function TopBar() {
           onMouseEnter={playHover}
           onClick={() => { playClick(); useCommandCenterStore.getState().toggleZenMode(); }}
         >
-          {useCommandCenterStore(s => s.zenMode) ? "▣" : "▤"}
+          {useCommandCenterStore(s => s.zenMode) ? "🖥️" : "📺"}
         </button>
         <div className="lang-toggle">
           <button className={lang === "en" ? "on" : ""} onMouseEnter={playHover} onClick={() => { playClick(); setLang("en"); }}>

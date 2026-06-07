@@ -65,16 +65,17 @@ export function ExecutiveWarRoom() {
 
   return (
     <div className="glass panel-pad">
-      <div className="phead">
+      <div className="phead" style={{ borderBottom: "1px solid var(--stroke)", paddingBottom: "12px", marginBottom: "12px" }}>
         <div
           className="ic"
           style={{
             color: "var(--red)",
-            borderColor: "rgba(255,93,108,0.35)",
-            background: "rgba(255,93,108,0.08)",
+            background: "transparent",
+            border: "none",
+            fontSize: "18px",
           }}
         >
-          ◎
+          ◈
         </div>
         <div className="grow">
           <div className="tt">{t("warRoom", lang)}</div>

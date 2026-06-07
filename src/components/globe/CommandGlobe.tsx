@@ -126,7 +126,7 @@ export function CommandGlobe() {
         const cloudMat = new THREE.MeshPhongMaterial({
           map: new THREE.TextureLoader().load("https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png"),
           transparent: true,
-          opacity: 0.55,
+          opacity: 0.15, // Reduced from 0.55
           blending: THREE.AdditiveBlending,
           side: THREE.DoubleSide,
           depthWrite: false
@@ -153,7 +153,7 @@ export function CommandGlobe() {
         }
       }
 
-      // Cinematic Effects (Bloom)
+      // Cinematic Effects (Bloom) - Reduced for executive theme
       const composer = (g as any).postProcessingComposer?.();
       if (composer) {
         let hasBloom = false;
@@ -161,9 +161,9 @@ export function CommandGlobe() {
         if (!hasBloom) {
           const bloomPass = new UnrealBloomPass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
-            1.2, // strength
-            0.4, // radius
-            0.85 // threshold
+            0.4, // strength (reduced from 1.2)
+            0.1, // radius (reduced from 0.4)
+            0.95 // threshold (increased from 0.85)
           );
           composer.addPass(bloomPass);
         }
@@ -284,7 +284,7 @@ export function CommandGlobe() {
             globeImageUrl={thermalMode ? GLOBE_BUMP_URL : GLOBE_TEXTURE_URL}
             bumpImageUrl={perfMode === "high" ? GLOBE_BUMP_URL : undefined}
             showAtmosphere={perfMode === "high"}
-            atmosphereColor={scenario?.id === "geomagnetic-storm" ? "#ff00ff" : "#5fb0ff"}
+            atmosphereColor={scenario?.id === "geomagnetic-storm" ? "#ff00ff" : "#243a5e"}
             atmosphereAltitude={scenario?.id === "geomagnetic-storm" ? 0.35 : 0.15}
             /* points */
             pointsData={combinedPoints}

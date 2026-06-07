@@ -188,9 +188,9 @@ export const es: Record<TranslationKey, string | readonly string[]> = {
 
   layerEnterpriseFootprint: "Huella Empresarial Global",
   footprintDisclaimer: "Huella multinacional simulada. No se usan ubicaciones reales de empresa ni datos operativos sensibles.",
-  footprintMarkets: "105 mercados simulados",
+  footprintMarkets: "112 mercados simulados",
   footprintHubs: "8 hubs regionales",
-  footprintCorridors: "24 corredores de dependencia",
+  footprintCorridors: "23 corredores de dependencia",
   footprintProviders: "7 proveedores de IA/cloud monitoreados",
 
   disclaimers: [

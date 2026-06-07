@@ -186,9 +186,9 @@ export const en = {
 
   layerEnterpriseFootprint: "Global Enterprise Footprint",
   footprintDisclaimer: "Simulated multinational footprint. No real company locations or sensitive operational data are used.",
-  footprintMarkets: "105 simulated markets",
+  footprintMarkets: "112 simulated markets",
   footprintHubs: "8 regional hubs",
-  footprintCorridors: "24 dependency corridors",
+  footprintCorridors: "23 dependency corridors",
   footprintProviders: "7 AI/cloud providers monitored",
 
   disclaimers: [

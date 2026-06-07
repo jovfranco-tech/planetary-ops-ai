@@ -237,16 +237,32 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
     const isAi = scenario?.id === "openai_outage" || scenario?.id === "copilot_outage" || scenario?.id === "multi_ai";
     const isIdp = scenario?.id === "idp_outage";
 
+    // ── Market presence dots (112 points) ──
     for (const m of SIMULATED_MARKETS) {
-      let color: string = "rgba(126,224,192,0.35)";
-      let rad = 0.25;
+      // Base visual sizing by tier — must be LARGE enough to see!
+      let color: string;
+      let rad: number;
+      let alt: number;
 
-      if (m.marketTier === "critical_market") {
-        color = "rgba(126,224,192,0.8)";
-        rad = 0.45;
+      switch (m.marketTier) {
+        case "critical_market":
+          color = "#7ee0c0";  // solid teal — bright and visible
+          rad = 0.62;
+          alt = 0.018;
+          break;
+        case "support_market":
+          color = "rgba(126,224,192,0.7)";
+          rad = 0.42;
+          alt = 0.014;
+          break;
+        default: // country_presence
+          color = "rgba(126,224,192,0.55)";
+          rad = 0.48;
+          alt = 0.015;
+          break;
       }
 
-      // Scenario integrations
+      // ── Scenario integrations ──
       const inLatam = m.region === "LATAM";
       const isCloudDep = m.dependencyProfile === "cloud" || m.dependencyProfile === "analytics";
       const isAiDep = m.dependencyProfile === "ai";
@@ -263,33 +279,34 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
 
       if (isCritical) {
         color = COLORS.red;
-        rad = m.marketTier === "critical_market" ? 0.6 : 0.4;
-        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.red), maxR: 2.5, speed: 1.8, period: 1000 });
+        rad = m.marketTier === "critical_market" ? 0.75 : 0.55;
+        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.red), maxR: 2.8, speed: 1.8, period: 1000 });
       } else if (isDegraded) {
         color = COLORS.amber;
-        rad = m.marketTier === "critical_market" ? 0.5 : 0.35;
+        rad = m.marketTier === "critical_market" ? 0.65 : 0.5;
         if (m.marketTier === "critical_market") {
-          rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.amber), maxR: 2.0, speed: 1.2, period: 1500 });
+          rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.amber), maxR: 2.2, speed: 1.2, period: 1500 });
         }
-      } else if (!scenario && m.marketTier === "critical_market") {
-        // Nominal glow for critical markets
-        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("rgba(126,224,192,0.5)"), maxR: 1.5, speed: 1.0, period: 2000 });
+      } else if (!scenario && (m.marketTier === "critical_market")) {
+        // Nominal glow for critical markets — subtle pulse
+        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("rgba(126,224,192,0.4)"), maxR: 1.8, speed: 0.8, period: 2500 });
       }
 
       points.push({
-        id: `m-${m.lat}-${m.lng}`,
+        id: `fp-${m.region}-${m.lat}-${m.lng}`,
         lat: m.lat,
         lng: m.lng,
         color,
-        alt: 0.01,
+        alt,
         rad,
         tip: tip(m.countryName, m.marketTier.replace("_", " ")),
       });
     }
 
+    // ── Regional hubs (8 points + labels) ──
     for (const h of SIMULATED_HUBS) {
       let color: string = COLORS.cyan;
-      let rad = 0.8;
+      let rad = 1.0;
       let state: GlobeLabel["state"] = "";
 
       const inLatam = h.region === "LATAM";
@@ -309,14 +326,14 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
       if (isCritical) {
         color = COLORS.red;
         state = "crit";
-        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.red), maxR: 4.5, speed: 2.0, period: 900 });
+        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.red), maxR: 5.0, speed: 2.0, period: 900 });
       } else if (isDegraded) {
         color = COLORS.amber;
         state = "warn";
-        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.amber), maxR: 3.5, speed: 1.5, period: 1200 });
+        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.amber), maxR: 4.0, speed: 1.5, period: 1200 });
       } else {
-        // Nominal hub glow
-        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.cyan), maxR: 3.0, speed: 1.2, period: 1800 });
+        // Nominal hub glow — always visible
+        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.cyan), maxR: 3.5, speed: 1.0, period: 2000 });
       }
 
       points.push({
@@ -324,24 +341,27 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
         lat: h.lat,
         lng: h.lng,
         color,
-        alt: 0.02,
+        alt: 0.025,
         rad,
         tip: tip(h.name, "REGIONAL HUB"),
       });
 
-      labels.push({ lat: h.lat, lng: h.lng, halt: 0.08, text: h.name, state });
+      labels.push({ lat: h.lat, lng: h.lng, halt: 0.09, text: h.name, state });
+    }
 
-      // Arc mapping
-      const targetMap: Record<string, string[]> = {
-        "North America": ["iad", "us-east-1"],
-        LATAM: ["sao", "iad"],
-        Europe: ["lon", "fra"],
-        MEA: ["fra"],
-        "South Asia": ["bom", "ai_usc"],
-        APAC: ["hnd", "sin"],
-      };
-      const targets = targetMap[h.region] || [];
-      targets.forEach((targetId) => {
+    // ── Dependency corridors: hubs → infrastructure nodes ──
+    const hubTargets: Record<string, string[]> = {
+      "North America": ["iad"],
+      LATAM: ["sao", "iad"],
+      Europe: ["lon", "fra"],
+      MEA: ["fra"],
+      "South Asia": ["bom"],
+      APAC: ["hnd", "sin"],
+    };
+
+    for (const h of SIMULATED_HUBS) {
+      const targets = hubTargets[h.region] || [];
+      for (const targetId of targets) {
         const targetNode = nodeById(targetId);
         if (targetNode) {
           arcs.push({
@@ -349,14 +369,46 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
             startLng: h.lng,
             endLat: targetNode.lat,
             endLng: targetNode.lng,
-            color: ["rgba(126,224,192,0.6)", "rgba(54,214,231,0.3)"],
-            stroke: 0.25,
-            dashLen: 0.2,
-            dashGap: 0.4,
-            dashTime: 3000,
+            color: ["rgba(126,224,192,0.55)", "rgba(54,214,231,0.35)"],
+            stroke: 0.45,
+            dashLen: 0.25,
+            dashGap: 0.35,
+            dashTime: 3500,
           });
         }
-      });
+      }
+    }
+
+    // ── Inter-hub corridors for visual density ──
+    const interHubRoutes: [string, string][] = [
+      ["hub-na", "hub-eu"],
+      ["hub-na", "hub-mex"],
+      ["hub-mex", "hub-sao"],
+      ["hub-eu", "hub-lon"],
+      ["hub-eu", "hub-mea"],
+      ["hub-lon", "hub-sa"],
+      ["hub-sa", "hub-apac"],
+      ["hub-mea", "hub-sa"],
+      ["hub-apac", "hub-na"],
+      ["hub-sao", "hub-eu"],
+    ];
+
+    for (const [fromId, toId] of interHubRoutes) {
+      const from = SIMULATED_HUBS.find(h => h.id === fromId);
+      const to = SIMULATED_HUBS.find(h => h.id === toId);
+      if (from && to) {
+        arcs.push({
+          startLat: from.lat,
+          startLng: from.lng,
+          endLat: to.lat,
+          endLng: to.lng,
+          color: ["rgba(255,200,91,0.35)", "rgba(126,224,192,0.25)"],
+          stroke: 0.35,
+          dashLen: 0.3,
+          dashGap: 0.5,
+          dashTime: 5000,
+        });
+      }
     }
   }
 

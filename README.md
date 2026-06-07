@@ -80,7 +80,11 @@ This is a standard Vite SPA and ships with `vercel.json`.
 
 (Or run `vercel` from the project root with the Vercel CLI.)
 
-## Roadmap — from deterministic demo to live copilot
+## Data honesty / demo disclaimer
+
+All infrastructure, providers, workflows, and metrics are **simulated**. No real company-sensitive data is used, and there is no real-time production monitoring. AI recommendations are decision-support only; human validation is required for real operations. The simulator highlights provider-concentration risk, multi-model fallback strategy, and responsible AI governance (human-in-the-loop, sensitivity gating) made visible at board level.
+
+## Roadmap
 
 The deterministic copilot is intentionally a drop-in for a real agent:
 
@@ -90,7 +94,7 @@ The deterministic copilot is intentionally a drop-in for a real agent:
 
 Further directions: real telemetry ingestion to replace simulated baselines, scenario authoring UI, and exportable board briefs (PDF).
 
-## Release notes — v0.1.0-rc
+## Release notes
 
 First release candidate. The application is feature-complete against its scope: cinematic globe, seven infrastructure layers, eight simulated incident scenarios, Executive War Room, AI Dependency Resilience module, Executive Decision Board with auto-generated board brief, deterministic AI copilot, and full EN/ES localization.
 

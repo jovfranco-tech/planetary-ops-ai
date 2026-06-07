@@ -186,6 +186,13 @@ export const es: Record<TranslationKey, string | readonly string[]> = {
   scenarioBoundaryDesc: "Las señales públicas muestran el estado de proveedores. El motor de escenarios modela el impacto empresarial.",
   pubStatusContextGlobe: "Sólo estado público del proveedor. El impacto empresarial se modela mediante escenarios.",
 
+  layerEnterpriseFootprint: "Huella Empresarial Global",
+  footprintDisclaimer: "Huella multinacional simulada. No se usan ubicaciones reales de empresa ni datos operativos sensibles.",
+  footprintMarkets: "105 mercados simulados",
+  footprintHubs: "8 hubs regionales",
+  footprintCorridors: "24 corredores de dependencia",
+  footprintProviders: "7 proveedores de IA/cloud monitoreados",
+
   disclaimers: [
     "Datos simulados de infraestructura combinados con feeds reales de datos públicos opcionales.",
     "Sin datos sensibles reales de empresa.",

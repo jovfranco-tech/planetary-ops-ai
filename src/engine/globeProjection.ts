@@ -3,6 +3,7 @@ import type { LayerId } from "../types/domain";
 import type { Scenario } from "../types/scenarios";
 import { COLORS, KIND_COLOR } from "../utils/constants";
 import { DR_PATHS, KEY_LABELS, NODES, ROUTES, nodeById } from "../data";
+import { SIMULATED_HUBS, SIMULATED_MARKETS } from "../data/footprint";
 import { ringFade } from "../utils/geo";
 
 /* ------------------------------------------------------------------ */
@@ -226,6 +227,101 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
         dashGap: 0.5,
         dashTime: 3000,
       });
+    }
+  }
+
+  if (layers.has("enterprise-footprint")) {
+    const isCableCut = scenario?.id === "cable_cut";
+    const isRansomware = scenario?.id === "ransomware";
+    const isCloud = scenario?.id === "useast_cloud";
+    const isAi = scenario?.id === "openai_outage" || scenario?.id === "multi_ai";
+
+    for (const m of SIMULATED_MARKETS) {
+      let color = "rgba(126,224,192,0.4)";
+      let rad = 0.25;
+
+      // Scenario integrations
+      if (isCableCut && m.lat < 25 && m.lat > -60 && m.lng > -100 && m.lng < -30) {
+        color = COLORS.amber;
+        rad = 0.4;
+      }
+      if (isRansomware && m.lat < 25 && m.lat > -60 && m.lng > -100 && m.lng < -30) {
+        color = COLORS.red;
+        rad = 0.5;
+      }
+      if (isCloud && m.lng < -60 && m.lng > -130 && m.lat > 20) {
+        color = COLORS.amber;
+        rad = 0.4;
+      }
+      if (isAi) {
+        color = COLORS.violet;
+        rad = 0.35;
+      }
+
+      points.push({
+        id: `m-${m.lat}-${m.lng}`,
+        lat: m.lat,
+        lng: m.lng,
+        color,
+        alt: 0.01,
+        rad,
+        tip: "",
+      });
+    }
+
+    for (const h of SIMULATED_HUBS) {
+      let color: string = COLORS.cyan;
+      let rad = 0.6;
+      let state: GlobeLabel["state"] = "";
+
+      if ((isCableCut || isRansomware) && h.region === "LATAM") {
+        color = isRansomware ? COLORS.red : COLORS.amber;
+        state = isRansomware ? "crit" : "warn";
+      }
+      if (isCloud && h.region === "NA") {
+        color = COLORS.amber;
+        state = "warn";
+      }
+      if (isAi) {
+        color = COLORS.violet;
+        state = "warn";
+      }
+
+      points.push({
+        id: h.id,
+        lat: h.lat,
+        lng: h.lng,
+        color,
+        alt: 0.02,
+        rad,
+        tip: tip(h.name, "REGIONAL HUB"),
+      });
+
+      labels.push({ lat: h.lat, lng: h.lng, halt: 0.08, text: h.name, state });
+
+      const targetMap: Record<string, string> = {
+        NA: "iad",
+        LATAM: "sao",
+        EU: "lon",
+        MEA: "fra",
+        SA: "bom",
+        APAC: "hnd",
+      };
+      const targetId = targetMap[h.region];
+      const targetNode = targetId ? nodeById(targetId) : null;
+      if (targetNode) {
+        arcs.push({
+          startLat: h.lat,
+          startLng: h.lng,
+          endLat: targetNode.lat,
+          endLng: targetNode.lng,
+          color: ["rgba(126,224,192,0.6)", "rgba(91,140,255,0.4)"],
+          stroke: 0.3,
+          dashLen: 0.2,
+          dashGap: 0.4,
+          dashTime: 2500,
+        });
+      }
     }
   }
 

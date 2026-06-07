@@ -11,7 +11,8 @@ export type LayerId =
   | "enterprise"
   | "cyber"
   | "continuity"
-  | "ai";
+  | "ai"
+  | "enterprise-footprint";
 
 export type NodeKind = "enterprise" | "cloud" | "ai" | "landing";
 

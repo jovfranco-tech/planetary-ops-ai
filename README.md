@@ -32,7 +32,7 @@ Most "ops dashboards" stop at telemetry. This project models the layer above tel
 ## Features
 
 - **Cinematic 3D globe** — infrastructure nodes, submarine/backbone routes, cloud regions, AI service mesh, orbital layer and live incident rings, driven declaratively from application state.
-- **Seven toggleable planetary layers** — space, backbone, cloud, enterprise, cyber, continuity and AI.
+- **Seven toggleable planetary layers** — space, backbone, cloud, enterprise footprint, cyber, continuity and AI.
 - **Scenario simulation engine** — eight pre-built incidents that re-project metrics, routes, regions and AI workflows in real time.
 - **Executive War Room** — animated resilience / continuity / AI-dependency / cyber-risk metrics, posture and recommended decision.
 - **AI Dependency Resilience module** — provider concentration bars, fallback readiness, and a workflow-continuity matrix with approval gating.
@@ -125,6 +125,12 @@ The deterministic copilot is intentionally a drop-in for a real agent:
 Further directions: real telemetry ingestion to replace simulated baselines, scenario authoring UI, and exportable board briefs (PDF).
 
 ## Release notes
+
+### v1.7.0 — Global Enterprise Footprint Layer
+
+- **Simulated Multinational Footprint**: Added a new visually striking "Global Enterprise Footprint" layer featuring 100+ simulated market points, 8 regional hubs, and 24 dependency corridors across the globe.
+- **Scenario Integration**: Hubs and markets react dynamically to the scenario engine. A LATAM cable cut will isolate and glow Latin American markets; an AI provider outage will visibly disrupt AI-enabled workflows globally.
+- **Strict Data Boundaries**: Features explicit disclaimers affirming the footprint is fully simulated and does not use or imply real company locations or sensitive operational data.
 
 ### v1.6.0 — Real Public Infrastructure & Provider Status
 

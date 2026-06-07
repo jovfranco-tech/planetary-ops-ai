@@ -71,6 +71,16 @@ export const LAYERS: InfrastructureLayer[] = [
       es: "Concentración de proveedores · fallback de modelos · gobierno",
     },
   },
+  {
+    id: "enterprise-footprint",
+    glyph: "◉",
+    color: "#ffc85b",
+    name: { en: "Global Enterprise Footprint", es: "Huella Empresarial Global" },
+    desc: {
+      en: "Multinational footprint · hubs · enterprise dependency",
+      es: "Huella multinacional · hubs · dependencia empresarial",
+    },
+  },
 ];
 
 export const ALL_LAYER_IDS = LAYERS.map((l) => l.id);

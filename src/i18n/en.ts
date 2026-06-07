@@ -184,6 +184,13 @@ export const en = {
   scenarioBoundaryDesc: "Public signals show provider status. Scenario engine models enterprise impact.",
   pubStatusContextGlobe: "Public provider status only. Enterprise impact is scenario-modeled.",
 
+  layerEnterpriseFootprint: "Global Enterprise Footprint",
+  footprintDisclaimer: "Simulated multinational footprint. No real company locations or sensitive operational data are used.",
+  footprintMarkets: "105 simulated markets",
+  footprintHubs: "8 regional hubs",
+  footprintCorridors: "24 dependency corridors",
+  footprintProviders: "7 AI/cloud providers monitored",
+
   disclaimers: [
     "Simulated infrastructure & AI-dependency data combined with optional real-world public data feeds.",
     "No real company-sensitive data is used.",

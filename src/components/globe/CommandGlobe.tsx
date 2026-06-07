@@ -6,6 +6,7 @@ import { projectGlobe } from "../../engine/globeProjection";
 import { projectLiveGlobe } from "../../engine/liveGlobeProjection";
 import { OrbitLayer } from "./OrbitLayer";
 import { DataModeLegend } from "./DataModeLegend";
+import { EnterpriseFootprintOverlay } from "./EnterpriseFootprintOverlay";
 import { useDataSourceStore } from "../../dataSources/useDataSources";
 
 function webglAvailable(): boolean {
@@ -179,6 +180,7 @@ export function CommandGlobe() {
       </div>
       <OrbitLayer visible={layers.has("space")} />
       <DataModeLegend />
+      <EnterpriseFootprintOverlay />
       <div className="stage-vignette" />
       {!supported && (
         <div className="globe-fallback">

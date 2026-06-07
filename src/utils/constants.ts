@@ -20,7 +20,7 @@ export const KIND_COLOR: Record<NodeKind, string> = {
 };
 
 /** Default layers enabled after a "Reset". */
-export const DEFAULT_LAYERS: LayerId[] = ["backbone", "cloud", "enterprise", "ai"];
+export const DEFAULT_LAYERS: LayerId[] = ["backbone", "cloud", "enterprise", "ai", "enterprise-footprint"];
 
 /** Globe assets (loaded at runtime in the browser). */
 export const GLOBE_TEXTURE_URL =

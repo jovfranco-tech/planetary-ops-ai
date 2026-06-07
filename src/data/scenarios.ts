@@ -43,8 +43,8 @@ export const SCENARIOS: Scenario[] = [
     affectedServices: ["crm", "anly", "data"],
     aiWorkflows: ["support", "sales"],
     businessImpact: {
-      en: "CRM & analytics degraded across LATAM; ~18% transaction latency increase.",
-      es: "CRM y analítica degradados en LATAM; ~18% más de latencia transaccional.",
+      en: "CRM & analytics degraded across LATAM; ~18% transaction latency increase. 20 simulated markets in LATAM shift to elevated risk.",
+      es: "CRM y analítica degradados en LATAM; ~18% más de latencia transaccional. 20 mercados simulados en LATAM pasan a riesgo elevado.",
     },
     metrics: {
       resilience: 71, aiRisk: 46, cyberRisk: 36, continuity: 74,
@@ -78,8 +78,8 @@ export const SCENARIOS: Scenario[] = [
     affectedServices: ["iam", "crm", "anly", "data", "exec"],
     aiWorkflows: ["brief", "support", "runbook"],
     businessImpact: {
-      en: "Single-region pinning exposes 5 critical services; revenue systems at risk.",
-      es: "El anclaje a una sola región expone 5 servicios críticos; sistemas de ingresos en riesgo.",
+      en: "Single-region pinning exposes 5 critical services; revenue systems at risk. US-East degradation affects 43 simulated markets dependent on the primary cloud control plane.",
+      es: "El anclaje a una sola región expone 5 servicios críticos; sistemas de ingresos en riesgo. La degradación de US-East afecta 43 mercados simulados dependientes del plano de control cloud principal.",
     },
     metrics: {
       resilience: 58, aiRisk: 54, cyberRisk: 41, continuity: 63,
@@ -113,8 +113,8 @@ export const SCENARIOS: Scenario[] = [
     affectedServices: ["iam", "collab", "erp", "crm", "aigov"],
     aiWorkflows: ["brief", "code", "support", "pmo", "gov"],
     businessImpact: {
-      en: "Global login disruption; workforce productivity stalls until emergency access restores SSO.",
-      es: "Disrupción global de acceso; la productividad se detiene hasta restaurar SSO con acceso de emergencia.",
+      en: "Global login disruption; workforce productivity stalls until emergency access restores SSO. 112 simulated markets completely blocked by identity failure.",
+      es: "Disrupción global de acceso; la productividad se detiene hasta restaurar SSO con acceso de emergencia. 112 mercados simulados completamente bloqueados por falla de identidad.",
     },
     metrics: {
       resilience: 44, aiRisk: 61, cyberRisk: 68, continuity: 52,
@@ -148,8 +148,8 @@ export const SCENARIOS: Scenario[] = [
     affectedServices: ["soc", "data", "erp", "im"],
     aiWorkflows: ["triage", "runbook"],
     businessImpact: {
-      en: "Containment may isolate LATAM systems; change freeze and manual operations likely for 24–72h.",
-      es: "La contención puede aislar sistemas LATAM; congelamiento de cambios y operación manual por 24–72h.",
+      en: "Containment may isolate LATAM systems; change freeze and manual operations likely for 24–72h. 20 simulated markets in LATAM isolated to contain blast radius.",
+      es: "La contención puede aislar sistemas LATAM; congelamiento de cambios y operación manual por 24–72h. 20 mercados simulados en LATAM aislados para contener el radio de impacto.",
     },
     metrics: {
       resilience: 49, aiRisk: 50, cyberRisk: 88, continuity: 55,
@@ -183,8 +183,8 @@ export const SCENARIOS: Scenario[] = [
     affectedServices: ["exec", "cs", "anly"],
     aiWorkflows: ["brief", "support", "sales"],
     businessImpact: {
-      en: "Executive briefing & support summarization degrade; fallback adds latency but preserves continuity.",
-      es: "Brief ejecutivo y resumen de soporte se degradan; el fallback añade latencia pero preserva continuidad.",
+      en: "Executive briefing & support summarization degrade; fallback adds latency but preserves continuity. 112 simulated markets experience degraded AI workflows.",
+      es: "Brief ejecutivo y resumen de soporte se degradan; el fallback añade latencia pero preserva continuidad. 112 mercados simulados experimentan flujos de IA degradados.",
     },
     metrics: {
       resilience: 73, aiRisk: 72, cyberRisk: 33, continuity: 78,
@@ -253,8 +253,8 @@ export const SCENARIOS: Scenario[] = [
     affectedServices: ["exec", "cs", "dev", "anly", "aigov"],
     aiWorkflows: ["brief", "support", "code", "sales", "gov", "doc"],
     businessImpact: {
-      en: "Broad AI-assisted output loss; concentration risk realized. Local/private model becomes critical path.",
-      es: "Pérdida amplia de salida asistida por IA; riesgo de concentración materializado. El modelo local/privado se vuelve ruta crítica.",
+      en: "Broad AI-assisted output loss; concentration risk realized. Local/private model becomes critical path. 112 simulated markets completely lose primary AI automation.",
+      es: "Pérdida amplia de salida asistida por IA; riesgo de concentración materializado. El modelo local/privado se vuelve ruta crítica. 112 mercados simulados pierden totalmente automatización IA principal.",
     },
     metrics: {
       resilience: 61, aiRisk: 89, cyberRisk: 37, continuity: 66,

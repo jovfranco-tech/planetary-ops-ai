@@ -234,28 +234,46 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
     const isCableCut = scenario?.id === "cable_cut";
     const isRansomware = scenario?.id === "ransomware";
     const isCloud = scenario?.id === "useast_cloud";
-    const isAi = scenario?.id === "openai_outage" || scenario?.id === "multi_ai";
+    const isAi = scenario?.id === "openai_outage" || scenario?.id === "copilot_outage" || scenario?.id === "multi_ai";
+    const isIdp = scenario?.id === "idp_outage";
 
     for (const m of SIMULATED_MARKETS) {
-      let color = "rgba(126,224,192,0.4)";
+      let color: string = "rgba(126,224,192,0.35)";
       let rad = 0.25;
 
+      if (m.marketTier === "critical_market") {
+        color = "rgba(126,224,192,0.8)";
+        rad = 0.45;
+      }
+
       // Scenario integrations
-      if (isCableCut && m.lat < 25 && m.lat > -60 && m.lng > -100 && m.lng < -30) {
-        color = COLORS.amber;
-        rad = 0.4;
-      }
-      if (isRansomware && m.lat < 25 && m.lat > -60 && m.lng > -100 && m.lng < -30) {
+      const inLatam = m.region === "LATAM";
+      const isCloudDep = m.dependencyProfile === "cloud" || m.dependencyProfile === "analytics";
+      const isAiDep = m.dependencyProfile === "ai";
+      const isIdpDep = m.dependencyProfile === "identity";
+
+      let isDegraded = false;
+      let isCritical = false;
+
+      if (isCableCut && inLatam) isDegraded = true;
+      if (isRansomware && inLatam) isCritical = true;
+      if (isCloud && (m.region === "North America" || isCloudDep)) isDegraded = true;
+      if (isAi && isAiDep) isDegraded = true;
+      if (isIdp && isIdpDep) isCritical = true;
+
+      if (isCritical) {
         color = COLORS.red;
-        rad = 0.5;
-      }
-      if (isCloud && m.lng < -60 && m.lng > -130 && m.lat > 20) {
+        rad = m.marketTier === "critical_market" ? 0.6 : 0.4;
+        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.red), maxR: 2.5, speed: 1.8, period: 1000 });
+      } else if (isDegraded) {
         color = COLORS.amber;
-        rad = 0.4;
-      }
-      if (isAi) {
-        color = COLORS.violet;
-        rad = 0.35;
+        rad = m.marketTier === "critical_market" ? 0.5 : 0.35;
+        if (m.marketTier === "critical_market") {
+          rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.amber), maxR: 2.0, speed: 1.2, period: 1500 });
+        }
+      } else if (!scenario && m.marketTier === "critical_market") {
+        // Nominal glow for critical markets
+        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("rgba(126,224,192,0.5)"), maxR: 1.5, speed: 1.0, period: 2000 });
       }
 
       points.push({
@@ -265,26 +283,40 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
         color,
         alt: 0.01,
         rad,
-        tip: "",
+        tip: tip(m.countryName, m.marketTier.replace("_", " ")),
       });
     }
 
     for (const h of SIMULATED_HUBS) {
       let color: string = COLORS.cyan;
-      let rad = 0.6;
+      let rad = 0.8;
       let state: GlobeLabel["state"] = "";
 
-      if ((isCableCut || isRansomware) && h.region === "LATAM") {
-        color = isRansomware ? COLORS.red : COLORS.amber;
-        state = isRansomware ? "crit" : "warn";
-      }
-      if (isCloud && h.region === "NA") {
+      const inLatam = h.region === "LATAM";
+      const isCloudDep = h.dependencyProfile === "cloud";
+      const isAiDep = h.dependencyProfile === "ai";
+      const isIdpDep = h.dependencyProfile === "identity";
+
+      let isDegraded = false;
+      let isCritical = false;
+
+      if (isCableCut && inLatam) isDegraded = true;
+      if (isRansomware && inLatam) isCritical = true;
+      if (isCloud && (h.region === "North America" || isCloudDep)) isDegraded = true;
+      if (isAi && isAiDep) isDegraded = true;
+      if (isIdp && isIdpDep) isCritical = true;
+
+      if (isCritical) {
+        color = COLORS.red;
+        state = "crit";
+        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.red), maxR: 4.5, speed: 2.0, period: 900 });
+      } else if (isDegraded) {
         color = COLORS.amber;
         state = "warn";
-      }
-      if (isAi) {
-        color = COLORS.violet;
-        state = "warn";
+        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.amber), maxR: 3.5, speed: 1.5, period: 1200 });
+      } else {
+        // Nominal hub glow
+        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.cyan), maxR: 3.0, speed: 1.2, period: 1800 });
       }
 
       points.push({
@@ -299,29 +331,32 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
 
       labels.push({ lat: h.lat, lng: h.lng, halt: 0.08, text: h.name, state });
 
-      const targetMap: Record<string, string> = {
-        NA: "iad",
-        LATAM: "sao",
-        EU: "lon",
-        MEA: "fra",
-        SA: "bom",
-        APAC: "hnd",
+      // Arc mapping
+      const targetMap: Record<string, string[]> = {
+        "North America": ["iad", "us-east-1"],
+        LATAM: ["sao", "iad"],
+        Europe: ["lon", "fra"],
+        MEA: ["fra"],
+        "South Asia": ["bom", "ai_usc"],
+        APAC: ["hnd", "sin"],
       };
-      const targetId = targetMap[h.region];
-      const targetNode = targetId ? nodeById(targetId) : null;
-      if (targetNode) {
-        arcs.push({
-          startLat: h.lat,
-          startLng: h.lng,
-          endLat: targetNode.lat,
-          endLng: targetNode.lng,
-          color: ["rgba(126,224,192,0.6)", "rgba(91,140,255,0.4)"],
-          stroke: 0.3,
-          dashLen: 0.2,
-          dashGap: 0.4,
-          dashTime: 2500,
-        });
-      }
+      const targets = targetMap[h.region] || [];
+      targets.forEach((targetId) => {
+        const targetNode = nodeById(targetId);
+        if (targetNode) {
+          arcs.push({
+            startLat: h.lat,
+            startLng: h.lng,
+            endLat: targetNode.lat,
+            endLng: targetNode.lng,
+            color: ["rgba(126,224,192,0.6)", "rgba(54,214,231,0.3)"],
+            stroke: 0.25,
+            dashLen: 0.2,
+            dashGap: 0.4,
+            dashTime: 3000,
+          });
+        }
+      });
     }
   }
 

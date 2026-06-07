@@ -12,43 +12,52 @@ export function EnterpriseFootprintOverlay() {
       className="panel"
       style={{
         position: "absolute",
-        bottom: 24,
-        left: 24,
+        top: 24,
+        left: "50%",
+        transform: "translateX(-50%)",
         zIndex: 20,
         background: "rgba(10, 15, 20, 0.85)",
         border: "1px solid rgba(255, 200, 91, 0.3)",
-        borderLeft: "3px solid #ffc85b",
-        padding: "16px",
-        borderRadius: "4px",
-        maxWidth: "320px",
-        pointerEvents: "none",
+        borderTop: "3px solid #ffc85b",
+        padding: "12px 24px",
+        borderRadius: "8px",
+        pointerEvents: "auto",
         backdropFilter: "blur(12px)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "12px",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.5)"
       }}
     >
-      <h3 style={{ fontSize: "14px", fontWeight: 600, color: "#ffc85b", marginBottom: "12px", textTransform: "uppercase" }}>
-        {tFunc("layerEnterpriseFootprint" as TranslationKey, lang)}
-      </h3>
-      
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
+      <div style={{ display: "flex", gap: "32px", textAlign: "center" }}>
         <div>
-          <div style={{ fontSize: "20px", fontWeight: 700, color: "var(--fg)" }}>105</div>
-          <div style={{ fontSize: "11px", color: "var(--muted)", lineHeight: 1.2 }}>{tFunc("footprintMarkets" as TranslationKey, lang).replace("105 ", "")}</div>
+          <div style={{ fontSize: "22px", fontWeight: 700, color: "var(--fg)" }}>112</div>
+          <div style={{ fontSize: "11px", color: "var(--muted)", textTransform: "uppercase" }}>{tFunc("footprintMarkets" as TranslationKey, lang).replace("112 ", "")}</div>
         </div>
         <div>
-          <div style={{ fontSize: "20px", fontWeight: 700, color: "var(--fg)" }}>8</div>
-          <div style={{ fontSize: "11px", color: "var(--muted)", lineHeight: 1.2 }}>{tFunc("footprintHubs" as TranslationKey, lang).replace("8 ", "")}</div>
+          <div style={{ fontSize: "22px", fontWeight: 700, color: "var(--fg)" }}>8</div>
+          <div style={{ fontSize: "11px", color: "var(--muted)", textTransform: "uppercase" }}>{tFunc("footprintHubs" as TranslationKey, lang).replace("8 ", "")}</div>
         </div>
         <div>
-          <div style={{ fontSize: "20px", fontWeight: 700, color: "var(--fg)" }}>24</div>
-          <div style={{ fontSize: "11px", color: "var(--muted)", lineHeight: 1.2 }}>{tFunc("footprintCorridors" as TranslationKey, lang).replace("24 ", "")}</div>
+          <div style={{ fontSize: "22px", fontWeight: 700, color: "var(--fg)" }}>23</div>
+          <div style={{ fontSize: "11px", color: "var(--muted)", textTransform: "uppercase" }}>{tFunc("footprintCorridors" as TranslationKey, lang).replace("23 ", "")}</div>
         </div>
         <div>
-          <div style={{ fontSize: "20px", fontWeight: 700, color: "var(--fg)" }}>7</div>
-          <div style={{ fontSize: "11px", color: "var(--muted)", lineHeight: 1.2 }}>{tFunc("footprintProviders" as TranslationKey, lang).replace("7 ", "")}</div>
+          <div style={{ fontSize: "22px", fontWeight: 700, color: "var(--fg)" }}>7</div>
+          <div style={{ fontSize: "11px", color: "var(--muted)", textTransform: "uppercase" }}>{tFunc("footprintProviders" as TranslationKey, lang).replace("7 ", "")}</div>
         </div>
       </div>
 
-      <div style={{ fontSize: "10px", color: "var(--muted)", lineHeight: 1.4, borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "12px" }}>
+      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+        {["LATAM: 20", "Europe: 35", "APAC: 25", "MEA: 22", "North America: 3", "South Asia: 7"].map(b => (
+          <span key={b} style={{ fontSize: "10px", padding: "2px 8px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "var(--fg)" }}>
+            {b}
+          </span>
+        ))}
+      </div>
+
+      <div style={{ fontSize: "10px", color: "var(--muted)", marginTop: "4px" }}>
         ⚠️ {tFunc("footprintDisclaimer" as TranslationKey, lang)}
       </div>
     </div>

@@ -4,13 +4,13 @@
    ========================================================================== */
 
 :root {
-  --bg:        #04060d;
-  --bg-2:      #070b16;
-  --panel:     rgba(11, 17, 33, 0.62);
-  --panel-2:   rgba(9, 14, 28, 0.86);
-  --solid:     #0a0f1f;
-  --stroke:    rgba(120, 152, 224, 0.13);
-  --stroke-2:  rgba(120, 152, 224, 0.28);
+  --bg:        #02040a;
+  --bg-2:      #04060d;
+  --panel:     rgba(8, 11, 18, 0.5);
+  --panel-2:   rgba(8, 11, 18, 0.8);
+  --solid:     #080b12;
+  --stroke:    rgba(255, 255, 255, 0.04);
+  --stroke-2:  rgba(255, 255, 255, 0.08);
 
   --text:      #eaf0ff;
   --muted:     #97a4cc;
@@ -182,11 +182,22 @@ body {
 .cop-trigger:hover { transform: translateY(-1px); }
 .cop-trigger.active { background: rgba(140,90,255,0.18); box-shadow: none; border: 1px solid rgba(179,136,255,0.4); }
 
+/* ============================ BUTTONS ============================ */
 .icon-btn {
-  width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--stroke-2); background: rgba(10,16,30,0.6);
-  color: var(--muted); cursor: pointer; font-size: 14px; display: grid; place-items: center; transition: all .18s; flex: none;
+  width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--stroke-2); background: transparent; color: var(--muted);
+  display: grid; place-items: center; cursor: pointer; transition: all .2s; font-size: 15px;
 }
-.icon-btn:hover { color: var(--text); border-color: var(--cyan); }
+.icon-btn:hover { background: rgba(120,140,180,0.1); color: var(--text); border-color: var(--cyan); }
+.icon-btn.on { background: rgba(54,214,231,0.1); color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 12px rgba(54,214,231,0.2); }
+
+.hero-action-btn {
+  font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+  padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all .2s;
+  background: rgba(54,214,231,0.1); color: var(--cyan); border: 1px solid var(--cyan);
+}
+.hero-action-btn:hover {
+  background: var(--cyan); color: #000; box-shadow: 0 0 16px rgba(54,214,231,0.4);
+}
 
 /* ============================ BODY GRID ============================ */
 .body {
@@ -808,3 +819,15 @@ body {
     --panel-2: transparent !important;
   }
 }
+/* ============================ MICRO-CHARTS ============================ */
+.stacked-bar { display: flex; height: 4px; border-radius: 99px; overflow: hidden; background: rgba(255,255,255,0.05); gap: 1px; }
+.stacked-bar-fill { height: 100%; transition: width 0.5s ease-out; }
+.stacked-bar-fill.good { background: var(--green); }
+.stacked-bar-fill.warn { background: var(--amber); }
+.stacked-bar-fill.crit { background: var(--red); }
+
+.severity-track { display: flex; gap: 2px; height: 6px; }
+.severity-tick { flex: 1; border-radius: 1px; background: rgba(255,255,255,0.05); transition: background 0.3s; }
+.severity-tick.active.low { background: var(--teal); }
+.severity-tick.active.med { background: var(--amber); }
+.severity-tick.active.high { background: var(--red); }

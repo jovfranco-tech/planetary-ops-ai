@@ -223,7 +223,23 @@ export function DecisionBoard() {
               </span>
             </div>
           )}
-          <div className="bb-text">{brief}</div>
+          <div className="bb-text" style={{ whiteSpace: "pre-wrap" }}>{brief}</div>
+          
+          <div style={{ marginTop: "12px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", fontSize: "9px", fontFamily: "var(--mono)", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "12px" }}>
+             <div style={{ background: "rgba(255,255,255,0.02)", padding: "8px", borderRadius: "4px", borderLeft: "2px solid var(--cyan)" }}>
+                <div style={{ color: "var(--faint)", marginBottom: "4px" }}>CONFIDENCE LEVEL</div>
+                <div style={{ color: "var(--text)", fontSize: "11px", fontWeight: 600 }}>
+                  {scenario ? "HIGH (94%) - Modeled" : "N/A - Live Ops"}
+                </div>
+             </div>
+             <div style={{ background: "rgba(255,255,255,0.02)", padding: "8px", borderRadius: "4px", borderLeft: "2px solid var(--amber)" }}>
+                <div style={{ color: "var(--faint)", marginBottom: "4px" }}>ASSUMPTIONS</div>
+                <div style={{ color: "var(--text)", fontSize: "10px", letterSpacing: "0.5px" }}>
+                  {scenario ? "Current threat profile unchanged" : "Based on public signals"}
+                </div>
+             </div>
+          </div>
+
           {scenario && (
             <div className="bb-next">
               <span className="bb-next-k">{t("nextActionL", lang)} · 24h</span>

@@ -27,7 +27,10 @@ export function ScenarioTimeline() {
     <div className="scenario-rail-wrap">
       <div className="rail-head">
         <span className="rh-t">{t("scenarios", lang)}</span>
-        <span className="rh-s">— {t("scenarioHint", lang)}</span>
+        <span className="rh-s" style={{ color: "var(--amber)", border: "1px solid rgba(246, 177, 62, 0.4)", background: "rgba(246, 177, 62, 0.08)", padding: "1px 6px", borderRadius: "4px", fontSize: "8px", marginLeft: "8px", letterSpacing: "1px", textTransform: "uppercase" }}>
+          MODELED ENTERPRISE IMPACT
+        </span>
+        <span className="rh-s" style={{ marginLeft: "8px" }}>— {t("scenarioHint", lang)}</span>
         <span className="grow" />
         {activeId && (
           <button className="rail-clear" onClick={clearScenario}>

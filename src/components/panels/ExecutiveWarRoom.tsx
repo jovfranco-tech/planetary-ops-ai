@@ -1,7 +1,7 @@
 import { useCommandCenterStore, useScenario, useMetrics } from "../../store/useCommandCenterStore";
 import { recommendedOption } from "../../engine/decisionEngine";
 import { derivePosture } from "../../engine/riskEngine";
-import { metricBarColor, metricClass, type MetricKind } from "../../utils/scoring";
+import { metricClass, type MetricKind } from "../../utils/scoring";
 import { t, tv } from "../../i18n";
 import { useCountUp } from "../common/useCountUp";
 import { useDataSourceStore } from "../../dataSources/useDataSources";
@@ -19,8 +19,7 @@ function WM({ k, full, value, unit, kind = "plain" }: WMProps) {
   const animated = typeof value === "number";
   const n = useCountUp(animated ? (value as number) : 0, 600);
   const cls = animated ? metricClass(kind, value as number) : "";
-  const barC = metricBarColor(kind, animated ? (value as number) : 0);
-  const showBar = kind === "risk" || kind === "good";
+  
   return (
     <div className="wm" title={full || k}>
       <div className="wm-k">{k}</div>
@@ -28,9 +27,17 @@ function WM({ k, full, value, unit, kind = "plain" }: WMProps) {
         {animated ? n : value}
         {unit ? <span className="wm-u">{unit}</span> : null}
       </div>
-      {showBar && (
-        <div className="wm-bar">
-          <i style={{ width: (animated ? n : 0) + "%", background: barC }} />
+      {kind === "good" && animated && (
+        <div className="stacked-bar" style={{ marginTop: "6px" }}>
+          <div className={`stacked-bar-fill ${cls}`} style={{ width: n + "%" }} />
+          <div style={{ flex: 1, background: "rgba(255,255,255,0.02)" }} />
+        </div>
+      )}
+      {kind === "risk" && animated && (
+        <div className="severity-track" style={{ marginTop: "6px" }}>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className={`severity-tick ${(n as number) > i * 20 ? "active " + cls : ""}`} />
+          ))}
         </div>
       )}
     </div>

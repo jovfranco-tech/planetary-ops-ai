@@ -25,6 +25,8 @@ export function TopBar() {
     }
   }, [status]);
 
+  const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19) + " UTC";
+
   return (
     <div className="topbar">
       <div className="brand">
@@ -40,7 +42,19 @@ export function TopBar() {
       <div className="status-pill">
         <span className={"dot " + dotClass} />
         <span className="label">{t("globalStatus", lang)}</span>
-        <span className="val">{t(status, lang)}</span>
+        <span className="val" style={{ textTransform: "uppercase" }}>{t(status, lang)}</span>
+      </div>
+
+      <div className="top-divider" />
+
+      <div className="status-pill" style={{ background: "transparent", borderColor: "transparent" }}>
+        <span className="label">SOURCE:</span>
+        <span className="val" style={{ color: "var(--cyan)" }}>PUBLIC SIGNALS</span>
+      </div>
+      
+      <div className="status-pill" style={{ background: "transparent", borderColor: "transparent" }}>
+        <span className="label">UPDATED:</span>
+        <span className="val" style={{ fontFamily: "var(--mono)" }}>{timestamp}</span>
       </div>
 
       <div className="top-spacer" />
@@ -75,13 +89,11 @@ export function TopBar() {
           👁️
         </button>
         <button 
-          className="icon-btn" 
-          title="Export Report" 
-          aria-label="Export PDF Report"
-          onMouseEnter={playHover}
+          className="hero-action-btn" 
           onClick={() => { playClick(); window.print(); }}
+          onMouseEnter={playHover}
         >
-          🖨️
+          EXPORT SNAPSHOT
         </button>
         <button 
           className={"icon-btn" + (useCommandCenterStore(s => s.zenMode) ? " on" : "")} 

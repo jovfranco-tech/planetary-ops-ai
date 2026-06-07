@@ -38,6 +38,7 @@ export interface CopilotMessage {
   from: "user" | "bot";
   text?: string;
   report?: CopilotReport;
+  mode?: "llm" | "fallback";
 }
 
 /** Live context handed to the copilot so answers reflect current posture. */

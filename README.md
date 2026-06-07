@@ -80,7 +80,20 @@ This is a standard Vite SPA and ships with `vercel.json`.
 2. Import it in Vercel — the framework auto-detects as **Vite**.
 3. Build command `npm run build`, output directory `dist`. Deploy.
 
-(Or run `vercel` from the project root with the Vercel CLI.)
+## Real Data Foundation (v1.1.0)
+
+Version 1.1.0 introduces a modular, serverless real-data foundation that enriches the simulator with optional live feeds without breaking the core offline experience:
+
+1. **Data Source Health panel** in the sidebar showing the status (Live/Cached/Simulated/Curated) of all data feeds.
+2. **Serverless API Routes** on Vercel:
+   - `/api/radar-outages`: Queries internet outages and anomalies from the Cloudflare Radar API (using `CLOUDFLARE_RADAR_TOKEN` if present, otherwise falling back gracefully to simulated events).
+   - `/api/satellites`: Fetches real TLE orbital parameters from CelesTrak for a sample of satellites (ISS, Starlink, GPS, NOAA) and propagates their circular orbits in real-time on the 3D globe.
+   - `/api/ai-status`: Aggregates live status page metrics for OpenAI, Anthropic, and GitHub, while keeping other providers in a safe simulated state with public links.
+3. **Curated Cable Dataset**: A dedicated dataset of major physical cable routes with landing points, coordinates, and criticality, without scraping third parties.
+
+### Cache & Fallback Design
+
+All serverless functions are configured with Edge Caching headers (`Cache-Control`) to protect public endpoints and maximize response times. If any external service fails, rate-limits, or times out, the adapters fall back to local simulated baselines seamlessly, showing `"Simulated baseline active"` or `"Live feed unavailable"` warnings.
 
 ## Data honesty / demo disclaimer
 
@@ -97,6 +110,17 @@ The deterministic copilot is intentionally a drop-in for a real agent:
 Further directions: real telemetry ingestion to replace simulated baselines, scenario authoring UI, and exportable board briefs (PDF).
 
 ## Release notes
+
+### v1.1.0 — Real Data Foundation
+
+- **Serverless API Routes**: Added `/api/radar-outages`, `/api/satellites`, and `/api/ai-status` in `/api` to fetch and normalize Cloudflare Radar, CelesTrak, and AI status data.
+- **Data Source Health Panel**: Added a sidebar panel indicating feed statuses, attributions, last updated times, and modes.
+- **3D Globe Enrichment**: Live satellites are propagated dynamically based on circular physics coordinates on the 3D globe. Real internet outages show pulsing amber/red rings.
+- **AI Resilience Panel Indicators**: Live status dots added next to AI providers indicating operational or degraded status.
+- **Strict Node Typechecking**: Created a separate `tsconfig.api.json` project reference for Node.js serverless functions.
+- **Disclaimer Updates**: Updated disclaimer terms in English and Spanish to clarify context-only real data feeds and demo boundaries.
+
+### v1.0.0 — Public Portfolio Release
 
 First release candidate. The application is feature-complete against its scope: cinematic globe, seven infrastructure layers, eight simulated incident scenarios, Executive War Room, AI Dependency Resilience module, Executive Decision Board with auto-generated board brief, deterministic AI copilot, and full EN/ES localization.
 

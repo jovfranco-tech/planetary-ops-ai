@@ -11,12 +11,21 @@ import { ScenarioTimeline } from "../components/panels/ScenarioTimeline";
 import { DecisionBoard } from "../components/panels/DecisionBoard";
 import { DemoDisclaimer } from "../components/panels/DemoDisclaimer";
 import { AICopilot } from "../components/copilot/AICopilot";
+import { DataSourceHealthPanel } from "../components/panels/DataSourceHealthPanel";
+import { useDataSourceStore } from "../dataSources/useDataSources";
 
 /** The cinematic command-center layout: top bar, three columns, decision bar. */
 export function AppShell() {
   const lang = useCommandCenterStore((s) => s.lang);
   const copilotOpen = useCommandCenterStore((s) => s.copilotOpen);
   const setCopilotOpen = useCommandCenterStore((s) => s.setCopilotOpen);
+  
+  const fetchDataSources = useDataSourceStore((s) => s.fetchDataSources);
+
+  /* Load real data sources on mount */
+  useEffect(() => {
+    fetchDataSources();
+  }, [fetchDataSources]);
 
   /* Keep the document language in sync for assistive technologies. */
   useEffect(() => {
@@ -28,8 +37,9 @@ export function AppShell() {
       <TopBar />
 
       <div className="body">
-        <div className="col-left">
+        <div className="col-left" style={{ display: "flex", flexDirection: "column", gap: "14px", height: "100%", minHeight: 0 }}>
           <Sidebar />
+          <DataSourceHealthPanel />
         </div>
 
         <div className="stage">

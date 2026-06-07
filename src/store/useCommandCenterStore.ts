@@ -43,6 +43,8 @@ interface CommandCenterState {
   focusRequest: FocusRequest | null;
   zenMode: boolean;
   perfMode: "high" | "low";
+  thermalMode: boolean;
+  colorBlindMode: boolean;
   proactiveAlert: string | null;
   selectedNode: SelectedNode | null;
 
@@ -59,6 +61,8 @@ interface CommandCenterState {
   closeDisclaimer: () => void;
   toggleZenMode: () => void;
   togglePerfMode: () => void;
+  toggleThermalMode: () => void;
+  toggleColorBlindMode: () => void;
   setProactiveAlert: (msg: string | null) => void;
   setSelectedNode: (node: SelectedNode | null) => void;
 }
@@ -72,6 +76,8 @@ export const useCommandCenterStore = create<CommandCenterState>((set) => ({
   focusRequest: null,
   zenMode: false,
   perfMode: "high",
+  thermalMode: false,
+  colorBlindMode: false,
   proactiveAlert: null,
   selectedNode: null,
 
@@ -115,6 +121,8 @@ export const useCommandCenterStore = create<CommandCenterState>((set) => ({
   closeDisclaimer: () => set({ showDisclaimer: false }),
   toggleZenMode: () => set((state) => ({ zenMode: !state.zenMode })),
   togglePerfMode: () => set((state) => ({ perfMode: state.perfMode === "high" ? "low" : "high" })),
+  toggleThermalMode: () => set((state) => ({ thermalMode: !state.thermalMode })),
+  toggleColorBlindMode: () => set((state) => ({ colorBlindMode: !state.colorBlindMode })),
   setProactiveAlert: (msg) => set({ proactiveAlert: msg }),
   setSelectedNode: (node) => set({ selectedNode: node }),
 }));

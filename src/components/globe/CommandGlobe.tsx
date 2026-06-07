@@ -46,6 +46,7 @@ export function CommandGlobe() {
   const focusRequest = useCommandCenterStore((s) => s.focusRequest);
   const scenarioId = useCommandCenterStore((s) => s.appliedScenarioId);
   const perfMode = useCommandCenterStore((s) => s.perfMode);
+  const thermalMode = useCommandCenterStore((s) => s.thermalMode);
   const selectedNode = useCommandCenterStore((s) => s.selectedNode);
   const scenario = useMemo(() => getScenario(scenarioId), [scenarioId]);
 
@@ -170,12 +171,22 @@ export function CommandGlobe() {
         cloudMesh.name = "cloudLayer";
         scene.add(cloudMesh);
       }
+      cloudMesh.visible = !thermalMode;
 
       // Topography (Displacement Map)
       const globeMaterial = (g as any).globeMaterial?.() as THREE.MeshPhongMaterial;
-      if (globeMaterial && !globeMaterial.displacementMap) {
-        globeMaterial.displacementMap = new THREE.TextureLoader().load(GLOBE_BUMP_URL);
-        globeMaterial.displacementScale = 1.2; // Extrude mountains
+      if (globeMaterial) {
+        if (!globeMaterial.displacementMap) {
+          globeMaterial.displacementMap = new THREE.TextureLoader().load(GLOBE_BUMP_URL);
+          globeMaterial.displacementScale = 1.2; // Extrude mountains
+        }
+        if (thermalMode) {
+          globeMaterial.color.setHex(0xff3300);
+          globeMaterial.emissive.setHex(0x330000);
+        } else {
+          globeMaterial.color.setHex(0xffffff);
+          globeMaterial.emissive.setHex(0x000000);
+        }
       }
 
       // Cinematic Effects (Bloom)
@@ -234,6 +245,44 @@ export function CommandGlobe() {
     g.pointOfView({ lat: focusRequest.lat, lng: focusRequest.lng, altitude: 1.9 }, 1200);
   }, [focusRequest]);
 
+  /* Gesture Controllers */
+  useEffect(() => {
+    const handleZoom = () => {
+      const g = globeRef.current;
+      if (!g) return;
+      const pov = g.pointOfView();
+      g.pointOfView({ ...pov, altitude: Math.max(0.1, pov.altitude - 0.2) }, 400);
+    };
+
+    const handleRotate = (e: any) => {
+      const g = globeRef.current;
+      if (!g) return;
+      const { deltaX, deltaY } = e.detail;
+      const pov = g.pointOfView();
+      // Disable auto rotate temporarily if user is interacting
+      const controls = g.controls() as any;
+      if (controls) controls.autoRotate = false;
+      
+      g.pointOfView({ 
+        lat: Math.max(-90, Math.min(90, pov.lat - deltaY * 40)),
+        lng: pov.lng - deltaX * 40,
+        altitude: pov.altitude
+      });
+      
+      // Resume after a few seconds
+      window.setTimeout(() => {
+        if (controls) controls.autoRotate = true;
+      }, 3000);
+    };
+
+    window.addEventListener("gesture-zoom", handleZoom);
+    window.addEventListener("gesture-rotate", handleRotate);
+    return () => {
+      window.removeEventListener("gesture-zoom", handleZoom);
+      window.removeEventListener("gesture-rotate", handleRotate);
+    };
+  }, []);
+
   return (
     <div className="stage-frame">
       <div className="stage-scan" />
@@ -245,7 +294,7 @@ export function CommandGlobe() {
             height={size.height}
             rendererConfig={{ antialias: true, alpha: true, preserveDrawingBuffer: true }}
             backgroundColor="rgba(0,0,0,0)"
-            globeImageUrl={GLOBE_TEXTURE_URL}
+            globeImageUrl={thermalMode ? GLOBE_BUMP_URL : GLOBE_TEXTURE_URL}
             bumpImageUrl={perfMode === "high" ? GLOBE_BUMP_URL : undefined}
             showAtmosphere={perfMode === "high"}
             atmosphereColor="#5fb0ff"

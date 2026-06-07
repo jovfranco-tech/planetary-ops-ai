@@ -5,11 +5,30 @@
  */
 
 let audioCtx: AudioContext | null = null;
+let analyser: AnalyserNode | null = null;
+let masterGain: GainNode | null = null;
+const dataArray = new Uint8Array(64);
+
+export function getAudioAmplitude(): number {
+  if (!analyser) return 0;
+  analyser.getByteTimeDomainData(dataArray);
+  let max = 0;
+  for (let i = 0; i < dataArray.length; i++) {
+    const val = Math.abs(dataArray[i] - 128);
+    if (val > max) max = val;
+  }
+  return max / 128; // 0.0 to 1.0
+}
 
 function getContext() {
   if (typeof window === "undefined") return null;
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 128;
+    masterGain = audioCtx.createGain();
+    masterGain.connect(analyser);
+    analyser.connect(audioCtx.destination);
   }
   if (audioCtx.state === "suspended") {
     audioCtx.resume().catch(() => {});
@@ -32,7 +51,7 @@ export function playHover() {
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(masterGain!);
   osc.start(ctx.currentTime);
   osc.stop(ctx.currentTime + 0.05);
 }
@@ -52,7 +71,7 @@ export function playClick() {
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(masterGain!);
   osc.start(ctx.currentTime);
   osc.stop(ctx.currentTime + 0.1);
 }
@@ -89,7 +108,7 @@ export function playAlert() {
 
   osc1.connect(gain);
   osc2.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(masterGain!);
   
   osc1.start(now);
   osc2.start(now);

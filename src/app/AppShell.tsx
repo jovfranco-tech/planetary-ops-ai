@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCommandCenterStore, useMetrics } from "../store/useCommandCenterStore";
 import { TopBar } from "../components/layout/TopBar";
@@ -13,13 +13,18 @@ import { DecisionBoard } from "../components/panels/DecisionBoard";
 import { DemoDisclaimer } from "../components/panels/DemoDisclaimer";
 import { AICopilot } from "../components/copilot/AICopilot";
 import { LiveFeedMonitor } from "../components/ai/LiveFeedMonitor";
+import { GestureController } from "../components/camera/GestureController";
 import { useDataSourceStore } from "../dataSources/useDataSources";
 import { t } from "../i18n";
-import { playAlert } from "../utils/audio";
+import { playAlert, getAudioAmplitude } from "../utils/audio";
 import { globalStatus } from "../engine/riskEngine";
+
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 
 /** The cinematic command-center layout: top bar, three columns, decision bar. */
 export function AppShell() {
+  useKeyboardShortcuts();
+  
   const lang = useCommandCenterStore((s) => s.lang);
   const copilotOpen = useCommandCenterStore((s) => s.copilotOpen);
   const setCopilotOpen = useCommandCenterStore((s) => s.setCopilotOpen);
@@ -40,12 +45,36 @@ export function AppShell() {
     document.documentElement.lang = lang;
   }, [lang]);
 
+  const colorBlindMode = useCommandCenterStore((s) => s.colorBlindMode);
+  useEffect(() => {
+    if (colorBlindMode) {
+      document.documentElement.classList.add("colorblind-safe");
+    } else {
+      document.documentElement.classList.remove("colorblind-safe");
+    }
+  }, [colorBlindMode]);
+
   /* Trigger alert sound on critical status */
   useEffect(() => {
     if (status === "critical") {
       playAlert();
     }
   }, [status]);
+
+  /* Audio-Reactive UI Sync */
+  const audioOverlayRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    let frameId: number;
+    const loop = () => {
+      const amp = getAudioAmplitude();
+      if (audioOverlayRef.current) {
+        audioOverlayRef.current.style.opacity = (amp * 1.5).toString();
+      }
+      frameId = requestAnimationFrame(loop);
+    };
+    loop();
+    return () => cancelAnimationFrame(frameId);
+  }, []);
 
   return (
     <div className="app">
@@ -132,8 +161,23 @@ export function AppShell() {
       {copilotOpen && <div className="cop-scrim" onClick={() => setCopilotOpen(false)} />}
       <AICopilot />
 
+      {/* Audio Reactive Overlay */}
+      <div 
+        ref={audioOverlayRef} 
+        style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          pointerEvents: "none",
+          boxShadow: "inset 0 0 150px var(--red)",
+          opacity: 0,
+          zIndex: 9998,
+          transition: "opacity 0.05s ease-out"
+        }}
+      />
+
       <DemoDisclaimer />
       <LiveFeedMonitor />
+      <GestureController />
     </div>
   );
 }

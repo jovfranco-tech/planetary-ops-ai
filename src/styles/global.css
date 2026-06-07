@@ -33,6 +33,14 @@
   --mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
+html.colorblind-safe {
+  --red: #ff7f00;   /* High-vis orange for critical */
+  --amber: #f0e442; /* Yellow for high */
+  --green: #0072b2; /* Safe blue for low/healthy */
+  --blue: #56b4e9;
+  --cyan: #56b4e9;
+}
+
 body.theme-critical {
   --bg:        #120404;
   --bg-2:      #1a0707;

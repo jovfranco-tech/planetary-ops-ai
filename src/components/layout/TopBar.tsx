@@ -57,6 +57,24 @@ export function TopBar() {
           {useCommandCenterStore(s => s.perfMode) === "high" ? "⚡️" : "🔋"}
         </button>
         <button 
+          className={"icon-btn" + (useCommandCenterStore(s => s.thermalMode) ? " on" : "")} 
+          title="Thermal Vision" 
+          aria-label="Toggle Thermal Vision"
+          onMouseEnter={playHover}
+          onClick={() => { playClick(); useCommandCenterStore.getState().toggleThermalMode(); }}
+        >
+          🌡️
+        </button>
+        <button 
+          className={"icon-btn" + (useCommandCenterStore(s => s.colorBlindMode) ? " on" : "")} 
+          title="Colorblind Safe Mode" 
+          aria-label="Toggle Colorblind Mode"
+          onMouseEnter={playHover}
+          onClick={() => { playClick(); useCommandCenterStore.getState().toggleColorBlindMode(); }}
+        >
+          👁️
+        </button>
+        <button 
           className={"icon-btn" + (useCommandCenterStore(s => s.zenMode) ? " on" : "")} 
           title="Zen Mode" 
           aria-label="Toggle Zen Mode"

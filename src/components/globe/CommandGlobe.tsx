@@ -9,7 +9,6 @@ import * as THREE from "three";
 import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { OrbitLayer } from "./OrbitLayer";
-import { DataModeLegend } from "./DataModeLegend";
 import { EnterpriseFootprintOverlay } from "./EnterpriseFootprintOverlay";
 import { useDataSourceStore } from "../../dataSources/useDataSources";
 
@@ -79,7 +78,6 @@ export function CommandGlobe() {
   );
 
   const combinedPoints = useMemo(() => [...data.points, ...liveData.points], [data.points, liveData.points]);
-  const combinedRings = useMemo(() => [...data.rings, ...liveData.rings], [data.rings, liveData.rings]);
   const combinedArcs = useMemo(() => [...data.arcs, ...liveData.arcs], [data.arcs, liveData.arcs]);
 
 
@@ -318,7 +316,7 @@ export function CommandGlobe() {
               });
             }}
             /* HTML Elements for tooltips and labels */
-            htmlElementsData={[...data.labels, ...([selectedNode].filter(Boolean) as any[])]}
+            htmlElementsData={[...([selectedNode].filter(Boolean) as any[])]}
             htmlLat="lat"
             htmlLng="lng"
             htmlAltitude="halt"
@@ -340,23 +338,17 @@ export function CommandGlobe() {
             /* arcs */
             arcsData={perfMode === "high" ? combinedArcs : []}
             arcColor="color"
-            arcStroke="stroke"
+            arcStroke={() => 0.1}
             arcDashLength="dashLen"
             arcDashGap="dashGap"
             arcDashAnimateTime="dashTime"
             arcAltitudeAutoScale={0.42}
             arcsTransitionDuration={400}
-            /* rings */
-            ringsData={perfMode === "high" ? combinedRings : []}
-            ringColor="ringColor"
-            ringMaxRadius="maxR"
-            ringPropagationSpeed="speed"
-            ringRepeatPeriod="period"
+            /* rings completely removed for minimalism */
           />
         )}
       </div>
       <OrbitLayer visible={layers.has("space")} />
-      <DataModeLegend />
       <EnterpriseFootprintOverlay />
       <div className="stage-vignette" />
       {!supported && (

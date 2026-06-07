@@ -94,9 +94,9 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
       lat: n.lat,
       lng: n.lng,
       color: nodeColor(n.kind, n.id, scenario),
-      alt: n.kind === "ai" ? 0.06 : 0.025,
-      rad: degraded ? 0.85 : affected ? 0.62 : n.kind === "ai" ? 0.55 : 0.48,
-      tip: tip(n.name[lang] || n.name.en, n.kind),
+      alt: 0,
+      rad: degraded ? 0.15 : affected ? 0.1 : n.kind === "ai" ? 0.08 : 0.05,
+      tip: `<b>${n.name.en}</b>`,
     });
   }
 
@@ -245,18 +245,18 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
       switch (m.marketTier) {
         case "critical_market":
           color = "#5be0a8";  // bright green
-          rad = 3.0;
+          rad = 0.15;
           alt = 0.012;
           break;
         case "support_market":
-          color = "#36d6e7";  // bright cyan
-          rad = 2.2;
-          alt = 0.01;
+          color = "#36d6e7";  // cyan
+          rad = 0.10;
+          alt = 0.008;
           break;
         default: // country_presence
-          color = "#7ee0c0";  // teal
-          rad = 2.5;
-          alt = 0.008;
+          color = "#7898e0";  // faint blue
+          rad = 0.05;
+          alt = 0.004;
           break;
       }
 
@@ -300,14 +300,9 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
       if (isCritical) {
         color = COLORS.red;
         state = "crit";
-        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.red), maxR: 5.0, speed: 2.0, period: 900 });
       } else if (isDegraded) {
         color = COLORS.amber;
         state = "warn";
-        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.amber), maxR: 4.0, speed: 1.5, period: 1200 });
-      } else {
-        // Nominal hub glow — always visible
-        rings.push({ lat: h.lat, lng: h.lng, ringColor: ringFade(COLORS.cyan), maxR: 3.5, speed: 1.0, period: 2000 });
       }
 
       points.push({
@@ -316,8 +311,8 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
         lng: h.lng,
         color,
         alt: 0.04,
-        rad: 3.5,
-        tip: tip(h.name, "REGIONAL HUB"),
+        rad: 0.25,
+        tip: `<b>${h.name}</b><br/><span style="color:#aaa">REGIONAL HUB</span>`,
         name: h.name,
         region: h.region,
       });

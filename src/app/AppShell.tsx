@@ -191,6 +191,8 @@ export function AppShell() {
       <Suspense fallback={null}>
         <GestureController />
       </Suspense>
+
+      <div className="crt-overlay" />
     </div>
   );
 }

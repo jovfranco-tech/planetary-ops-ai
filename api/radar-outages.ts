@@ -1,31 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 // Mock/fallback payload used when API is unavailable or unauthenticated
-const FALLBACK_OUTAGES = [
-  {
-    id: "outage-sam1-latam",
-    locationName: "LATAM / South America",
-    countryCode: "BR",
-    region: "LATAM",
-    startedAt: new Date(Date.now() - 3600000 * 2).toISOString(), // 2 hours ago
-    severity: "high",
-    cause: "Submarine cable shunt fault",
-    scope: "SAM-1 Submarine Loop",
-    summary: "Ambient fiber degradation causing elevated latency between São Paulo and Miami landing points."
-  },
-  {
-    id: "outage-eu-central-power",
-    locationName: "Frankfurt",
-    countryCode: "DE",
-    region: "EU",
-    startedAt: new Date(Date.now() - 3600000 * 5).toISOString(), // 5 hours ago
-    endedAt: new Date(Date.now() - 3600000).toISOString(), // resolved 1 hour ago
-    severity: "medium",
-    cause: "Local grid instability",
-    scope: "Frankfurt Zone 2 Hub",
-    summary: "Localized power supply issues briefly degraded secondary edge nodes."
-  }
-];
+const FALLBACK_OUTAGES: any[] = [];
 
 export default async function handler(
   req: VercelRequest,
@@ -38,12 +14,12 @@ export default async function handler(
   const token = process.env.CLOUDFLARE_RADAR_TOKEN || process.env.CLOUDFLARE_API_TOKEN;
 
   if (!token) {
-    // TODO: Configure CLOUDFLARE_RADAR_TOKEN in Vercel to activate live Cloudflare Radar feeds
+    // Cloudflare Radar token missing. Return unavailable safely.
     return res.status(200).json({
       source: "cloudflare-radar",
-      status: "simulated",
+      status: "unavailable",
       lastUpdated: new Date().toISOString(),
-      attribution: "Cloudflare Radar (Simulated Baseline)",
+      attribution: "Cloudflare Radar",
       outages: FALLBACK_OUTAGES
     });
   }

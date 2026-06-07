@@ -127,6 +127,15 @@ Further directions: real telemetry ingestion to replace simulated baselines, sce
 
 ## Release notes
 
+### v1.5.0 — Real Public Signals Layer
+
+- **Unified Public Signal Engine**: Replaced ad-hoc `DataSourceHealth` structure with a unified `RealPublicSignal` engine. The platform now aggregates AWS, Google Cloud, Azure, Cloudflare Radar, CelesTrak, and Vercel Health into a single deterministic format.
+- **Reference & Unavailable Modes**: Improved API robustness. Endpoints that fail or lack configuration tokens now fallback cleanly to `unavailable` or `reference` instead of inventing simulated feeds, ensuring strict adherence to "no fake live data" rules.
+- **Vercel Platform Health API**: Added a new `/api/health` endpoint that exposes the actual deployment's version and uptime status.
+- **LLM Context Injection**: The Gemini LLM Copilot now ingests the live `RealPublicSignal` array alongside simulated scenario metrics. The system prompt was hardened to explicitly instruct Gemini that "public signals are for context only and do not represent the core crisis".
+- **Enhanced Executive Snapshot**: The markdown export engine now neatly summarizes all live and reference `Real Public Signals` alongside the simulation metrics.
+- **Globe Fidelity**: Live Globe layers automatically distinguish between "real" (live feeds) and "reference" states through updated interactive tooltips and mode badges.
+
 ### v1.4.0 — Executive Snapshot Export
 
 - **Board-Ready Markdown Export**: Added a one-click capability to export the current command center posture, active scenario metrics, and AI resilience state directly into a well-formatted Markdown document.

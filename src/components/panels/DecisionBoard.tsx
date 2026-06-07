@@ -131,7 +131,7 @@ export function DecisionBoard() {
   const recId = recommendedOptionId(scenario);
   const ghost = !scenario;
   const brief = generateBoardBrief(scenario, lang);
-  const health = useDataSourceStore((s) => s.health);
+  const signals = useDataSourceStore((s) => s.signals);
   const metrics = useMetrics();
 
   const [copiedBrief, setCopiedBrief] = useState(false);
@@ -145,7 +145,7 @@ export function DecisionBoard() {
   };
 
   const handleCopySnapshot = () => {
-    const snap = generateSnapshot(scenario, metrics, health, lang);
+    const snap = generateSnapshot(scenario, metrics, signals, lang);
     const md = buildMarkdownSnapshot(snap);
     navigator.clipboard.writeText(md).then(() => {
       setCopiedSnap(true);
@@ -154,7 +154,7 @@ export function DecisionBoard() {
   };
 
   const handleDownloadMd = () => {
-    const snap = generateSnapshot(scenario, metrics, health, lang);
+    const snap = generateSnapshot(scenario, metrics, signals, lang);
     const md = buildMarkdownSnapshot(snap);
     const blob = new Blob([md], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);

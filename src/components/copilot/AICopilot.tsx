@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CopilotMessage } from "../../types/ai";
 import { useCommandCenterStore, useScenario, useMetrics } from "../../store/useCommandCenterStore";
+import { useDataSourceStore } from "../../dataSources/useDataSources";
 import { runCopilot } from "../../ai";
 import { t } from "../../i18n";
 import { CopilotResponseCard } from "./CopilotResponseCard";
@@ -35,6 +36,7 @@ export function AICopilot() {
   const runScenario = useCommandCenterStore((s) => s.runScenario);
   const scenario = useScenario();
   const metrics = useMetrics();
+  const signals = useDataSourceStore((s) => s.signals);
 
   const greeting = t("copilotGreeting", lang);
   const [messages, setMessages] = useState<CopilotMessage[]>([{ from: "bot", text: greeting }]);
@@ -85,6 +87,7 @@ export function AICopilot() {
             currentMetrics: metrics,
             affectedRegions: scenario?.affectedRegions,
             affectedServices: scenario?.affectedServices,
+            realPublicSignals: signals,
           }
         };
 

@@ -45,13 +45,14 @@ export function projectLiveGlobe(input: LiveGlobeInput): LiveGlobeData {
     if (sourceMode === "curated") modeBadgeClass = "badge-curated";
     if (sourceMode === "unavailable") modeBadgeClass = "badge-unavailable";
     if (sourceMode === "cached") modeBadgeClass = "badge-cached";
+    if (sourceMode === "reference") modeBadgeClass = "badge-reference";
 
     const updateStr = lastUpdated ? `<br/><span style="font-size: 9px; color: var(--faint);">${tFunc("lastUpdated" as TranslationKey, lang)}: ${lastUpdated}</span>` : "";
 
     return `<div class="node-tip" style="min-width: 180px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
         <span class="nt-k">${title.toUpperCase()}</span>
-        <span class="source-badge ${modeBadgeClass}" style="font-size: 8px; padding: 2px 4px; border-radius: 4px;">${tFunc((sourceMode === "real" ? "feedLive" : `feed${sourceMode.charAt(0).toUpperCase() + sourceMode.slice(1)}`) as TranslationKey, lang) || sourceMode}</span>
+        <span class="source-badge ${modeBadgeClass}" style="font-size: 8px; padding: 2px 4px; border-radius: 4px; text-transform: uppercase;">${tFunc((sourceMode === "real" ? "feedLive" : `feed${sourceMode.charAt(0).toUpperCase() + sourceMode.slice(1)}`) as TranslationKey, lang) || sourceMode}</span>
       </div>
       <b style="font-size: 13px;">${subtitle}</b>
       <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.1);">
@@ -90,7 +91,7 @@ export function projectLiveGlobe(input: LiveGlobeInput): LiveGlobeData {
           tip: buildTip(
             "INTERNET ANOMALY",
             out.locationName,
-            isLive ? "real" : "simulated",
+            isLive ? "live" : "simulated",
             "Cloudflare Radar"
           )
         });
@@ -117,7 +118,7 @@ export function projectLiveGlobe(input: LiveGlobeInput): LiveGlobeData {
         tip: buildTip(
           `SATELLITE (${sat.category.toUpperCase()})`,
           sat.name,
-          isLive ? "real" : "simulated",
+          isLive ? "live" : "cached",
           "CelesTrak NORAD GP",
           sat.epoch
         )

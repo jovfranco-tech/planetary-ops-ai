@@ -6,7 +6,7 @@ const DEFAULT_PROVIDERS = [
     id: "openai",
     name: "OpenAI",
     status: "operational",
-    sourceMode: "simulated",
+    sourceMode: "unavailable",
     lastCheckedAt: new Date().toISOString(),
     attribution: "https://status.openai.com"
   },
@@ -14,7 +14,7 @@ const DEFAULT_PROVIDERS = [
     id: "anthropic",
     name: "Anthropic Claude",
     status: "operational",
-    sourceMode: "simulated",
+    sourceMode: "unavailable",
     lastCheckedAt: new Date().toISOString(),
     attribution: "https://status.anthropic.com"
   },
@@ -22,7 +22,7 @@ const DEFAULT_PROVIDERS = [
     id: "gemini",
     name: "Google Gemini / Google AI",
     status: "operational",
-    sourceMode: "simulated",
+    sourceMode: "reference",
     lastCheckedAt: new Date().toISOString(),
     attribution: "https://status.cloud.google.com"
   },
@@ -30,7 +30,7 @@ const DEFAULT_PROVIDERS = [
     id: "ms-copilot",
     name: "Microsoft Copilot",
     status: "operational",
-    sourceMode: "simulated",
+    sourceMode: "reference",
     lastCheckedAt: new Date().toISOString(),
     attribution: "https://status.office.com"
   },
@@ -38,7 +38,7 @@ const DEFAULT_PROVIDERS = [
     id: "github-copilot",
     name: "GitHub Copilot",
     status: "operational",
-    sourceMode: "simulated",
+    sourceMode: "unavailable",
     lastCheckedAt: new Date().toISOString(),
     attribution: "https://www.githubstatus.com"
   },
@@ -46,7 +46,7 @@ const DEFAULT_PROVIDERS = [
     id: "azure-openai",
     name: "Azure OpenAI",
     status: "operational",
-    sourceMode: "simulated",
+    sourceMode: "reference",
     lastCheckedAt: new Date().toISOString(),
     attribution: "https://status.azure.com"
   }
@@ -109,7 +109,7 @@ export default async function handler(
     const providers = DEFAULT_PROVIDERS.map((p) => {
       let statusInfo: any = null;
       let attribution = p.attribution;
-      let sourceMode: "live" | "status-page" | "simulated" | "unavailable" = "simulated";
+      let sourceMode = p.sourceMode; // default from above (unavailable or reference)
 
       if (p.id === "openai" && openAIResult.status === "fulfilled") {
         statusInfo = openAIResult.value;

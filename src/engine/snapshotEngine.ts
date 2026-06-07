@@ -1,7 +1,7 @@
 import type { Language } from "../types/i18n";
 import type { Scenario } from "../types/scenarios";
 import type { WarRoomMetrics } from "../types/domain";
-import type { DataSourceHealth } from "../dataSources/types";
+import type { RealPublicSignal } from "../realSignals/types";
 import { generateBoardBrief } from "./briefingEngine";
 import { recommendedOptionId } from "./decisionEngine";
 
@@ -12,13 +12,13 @@ export interface ExecutiveSnapshot {
   metrics: WarRoomMetrics;
   brief: string;
   recommendedId: string | null;
-  sourceHealth: DataSourceHealth[];
+  signals: RealPublicSignal[];
 }
 
 export function generateSnapshot(
   scenario: Scenario | null,
   metrics: WarRoomMetrics,
-  sourceHealth: DataSourceHealth[],
+  signals: RealPublicSignal[],
   lang: Language
 ): ExecutiveSnapshot {
   return {
@@ -28,6 +28,6 @@ export function generateSnapshot(
     metrics,
     brief: generateBoardBrief(scenario, lang),
     recommendedId: recommendedOptionId(scenario),
-    sourceHealth
+    signals
   };
 }

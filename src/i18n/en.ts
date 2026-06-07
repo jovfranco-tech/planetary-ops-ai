@@ -148,6 +148,7 @@ export const en = {
   feedSimulated: "Simulated",
   feedCurated: "Curated",
   feedUnavailable: "Unavailable",
+  feedReference: "Reference",
   feedLoading: "Refreshing feeds...",
   baselineActive: "Simulated baseline active",
   liveFeedUnavailable: "Live feed unavailable",

@@ -118,7 +118,7 @@ export default async function handler(
       source: "celestrak",
       status: "unavailable",
       lastUpdated: new Date().toISOString(),
-      attribution: "CelesTrak (Simulated Baseline)",
+      attribution: "CelesTrak (Cached Sample)",
       satellites: FALLBACK_SATELLITES,
       errorMessage: error.message || "Network Error"
     });

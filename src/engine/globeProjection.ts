@@ -172,31 +172,31 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
     let dashTime: number;
     if (cut) {
       color = [COLORS.red, COLORS.red];
-      stroke = 0.95;
+      stroke = 0.5;
       dashLen = 0.25;
       dashGap = 0.18;
       dashTime = 600;
     } else if (fail) {
       color = [COLORS.green, COLORS.green];
-      stroke = 0.85;
+      stroke = 0.45;
       dashLen = 0.5;
       dashGap = 0.1;
       dashTime = 1400;
     } else if (atRisk) {
       color = [COLORS.amber, COLORS.amber];
-      stroke = 0.6;
+      stroke = 0.3;
       dashLen = 0.35;
       dashGap = 0.2;
       dashTime = 1200;
     } else if (r.layer === "ai") {
-      color = ["rgba(179,136,255,0.6)", "rgba(91,140,255,0.45)"];
-      stroke = 0.45;
+      color = ["rgba(139,92,246,0.4)", "rgba(139,92,246,0.1)"];
+      stroke = 0.25;
       dashLen = 0.4;
       dashGap = 0.22;
       dashTime = 4000;
     } else {
-      color = ["rgba(54,214,231,0.5)", "rgba(91,140,255,0.4)"];
-      stroke = 0.4;
+      color = ["rgba(59,130,246,0.3)", "rgba(59,130,246,0.05)"];
+      stroke = 0.2;
       dashLen = 0.45;
       dashGap = 0.25;
       dashTime = 5200;
@@ -224,8 +224,8 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
         startLng: a.lng,
         endLat: b.lat,
         endLng: b.lng,
-        color: ["rgba(91,224,168,0.5)", "rgba(126,224,192,0.35)"],
-        stroke: 0.4,
+        color: ["rgba(16,185,129,0.3)", "rgba(16,185,129,0.1)"],
+        stroke: 0.2,
         dashLen: 0.18,
         dashGap: 0.5,
         dashTime: 3000,
@@ -245,18 +245,18 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
       switch (m.marketTier) {
         case "critical_market":
           color = "#5be0a8";  // bright green
-          rad = 0.15;
-          alt = 0.012;
+          rad = 0.08;
+          alt = 0.01;
           break;
         case "support_market":
           color = "#36d6e7";  // cyan
-          rad = 0.10;
-          alt = 0.008;
+          rad = 0.05;
+          alt = 0.005;
           break;
         default: // country_presence
-          color = "#7898e0";  // faint blue
-          rad = 0.05;
-          alt = 0.004;
+          color = "rgba(120,152,224,0.6)";  // faint blue
+          rad = 0.03;
+          alt = 0.002;
           break;
       }
 
@@ -265,16 +265,16 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
 
       if (isCritical) {
         color = COLORS.red;
-        rad = m.marketTier === "critical_market" ? 3.2 : 2.8;
-        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.red), maxR: 4.0, speed: 1.8, period: 1000 });
+        rad = m.marketTier === "critical_market" ? 0.25 : 0.2;
+        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.red), maxR: 2.0, speed: 1.8, period: 1000 });
       } else if (isDegraded) {
         color = COLORS.amber;
-        rad = m.marketTier === "critical_market" ? 3.0 : 2.5;
+        rad = m.marketTier === "critical_market" ? 0.2 : 0.15;
         if (m.marketTier === "critical_market") {
-          rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.amber), maxR: 3.5, speed: 1.2, period: 1500 });
+          rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.amber), maxR: 1.5, speed: 1.2, period: 1500 });
         }
       } else if (!scenario && (m.marketTier === "critical_market")) {
-        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("#5be0a8"), maxR: 2.5, speed: 0.8, period: 2500 });
+        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("rgba(91,224,168,0.5)"), maxR: 1.0, speed: 0.8, period: 3000 });
       }
 
       points.push({

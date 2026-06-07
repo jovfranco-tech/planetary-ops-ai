@@ -1,16 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Globe, { type GlobeMethods } from "react-globe.gl";
 import { useCommandCenterStore } from "../../store/useCommandCenterStore";
 import { GLOBE_BUMP_URL, GLOBE_TEXTURE_URL, INITIAL_POV } from "../../utils/constants";
-import { projectGlobe } from "../../engine/globeProjection";
-import { projectLiveGlobe } from "../../engine/liveGlobeProjection";
-import { getScenario } from "../../engine/scenarioEngine";
 import * as THREE from "three";
 import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { OrbitLayer } from "./OrbitLayer";
 import { EnterpriseFootprintOverlay } from "./EnterpriseFootprintOverlay";
-import { useDataSourceStore } from "../../dataSources/useDataSources";
+import { useGlobeData } from "./useGlobeData";
 
 function webglAvailable(): boolean {
   try {
@@ -40,48 +37,17 @@ function buildLabelEl(d: object): HTMLElement {
 
 /** The cinematic 3D operational globe — the visual hero of the command center. */
 export function CommandGlobe() {
+  const { combinedPoints, combinedArcs, scenario } = useGlobeData();
   const layers = useCommandCenterStore((s) => s.layers);
-  const lang = useCommandCenterStore((s) => s.lang);
   const focusRequest = useCommandCenterStore((s) => s.focusRequest);
-  const scenarioId = useCommandCenterStore((s) => s.appliedScenarioId);
   const perfMode = useCommandCenterStore((s) => s.perfMode);
   const thermalMode = useCommandCenterStore((s) => s.thermalMode);
   const selectedNode = useCommandCenterStore((s) => s.selectedNode);
-  const scenario = useMemo(() => getScenario(scenarioId), [scenarioId]);
 
   const hostRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<GlobeMethods | undefined>(undefined);
   const [size, setSize] = useState({ width: 0, height: 0 });
   const [supported] = useState(webglAvailable);
-
-  const aiProviders = useDataSourceStore((s) => s.aiProviders);
-  const satellites = useDataSourceStore((s) => s.satellites);
-  const outages = useDataSourceStore((s) => s.outages);
-  const cloudProviders = useDataSourceStore((s) => s.cloudProviders);
-
-  const [timeTick, setTimeTick] = useState(0);
-
-  // Satellite orbit tick animation
-  useEffect(() => {
-    const timer = setInterval(() => setTimeTick((t) => t + 1), 2500);
-    return () => clearInterval(timer);
-  }, []);
-
-  const data = useMemo(
-    () => projectGlobe({ layers, scenario, lang }),
-    [layers, scenario, lang],
-  );
-
-  const liveData = useMemo(
-    () => projectLiveGlobe({ layers, scenario, lang, outages, satellites, aiProviders, cloudProviders }),
-    [layers, scenario, lang, outages, satellites, aiProviders, cloudProviders, timeTick]
-  );
-
-  const combinedPoints = useMemo(() => [...data.points, ...liveData.points], [data.points, liveData.points]);
-  const combinedArcs = useMemo(() => [...data.arcs, ...liveData.arcs], [data.arcs, liveData.arcs]);
-
-
-  /* Track container size. */
   useEffect(() => {
     if (!hostRef.current) return;
     const el = hostRef.current;
@@ -243,6 +209,29 @@ export function CommandGlobe() {
     g.pointOfView({ lat: focusRequest.lat, lng: focusRequest.lng, altitude: 1.9 }, 1200);
   }, [focusRequest]);
 
+  /* Cinematic Scenario Fly-To */
+  useEffect(() => {
+    const g = globeRef.current;
+    if (!g) return;
+    if (scenario) {
+      const isEu = scenario.id.includes("EU") || scenario.title.en.includes("Europe");
+      const isApac = scenario.id.includes("APAC") || scenario.title.en.includes("Asia");
+      const lat = isEu ? 48 : isApac ? 22 : 38;
+      const lng = isEu ? 11 : isApac ? 114 : -97;
+      g.pointOfView({ lat, lng, altitude: 1.2 }, 2000);
+      
+      const controls = g.controls() as any;
+      if (controls) controls.autoRotate = false;
+    } else {
+      g.pointOfView(INITIAL_POV, 2000);
+      const controls = g.controls() as any;
+      if (controls) {
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.42;
+      }
+    }
+  }, [scenario]);
+
   /* Gesture Controllers */
   useEffect(() => {
     const handleZoom = () => {
@@ -295,8 +284,8 @@ export function CommandGlobe() {
             globeImageUrl={thermalMode ? GLOBE_BUMP_URL : GLOBE_TEXTURE_URL}
             bumpImageUrl={perfMode === "high" ? GLOBE_BUMP_URL : undefined}
             showAtmosphere={perfMode === "high"}
-            atmosphereColor={scenarioId === "geomagnetic-storm" ? "#ff00ff" : "#5fb0ff"}
-            atmosphereAltitude={scenarioId === "geomagnetic-storm" ? 0.35 : 0.15}
+            atmosphereColor={scenario?.id === "geomagnetic-storm" ? "#ff00ff" : "#5fb0ff"}
+            atmosphereAltitude={scenario?.id === "geomagnetic-storm" ? 0.35 : 0.15}
             /* points */
             pointsData={combinedPoints}
             pointLat="lat"

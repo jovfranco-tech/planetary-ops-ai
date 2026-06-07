@@ -820,14 +820,35 @@ body {
   }
 }
 /* ============================ MICRO-CHARTS ============================ */
+@keyframes growBar {
+  from { width: 0%; opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popTick {
+  0% { transform: scaleY(0); opacity: 0; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+
 .stacked-bar { display: flex; height: 4px; border-radius: 99px; overflow: hidden; background: rgba(255,255,255,0.05); gap: 1px; }
-.stacked-bar-fill { height: 100%; transition: width 0.5s ease-out; }
+.stacked-bar-fill { 
+  height: 100%; 
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+  animation: growBar 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 .stacked-bar-fill.good { background: var(--green); }
 .stacked-bar-fill.warn { background: var(--amber); }
 .stacked-bar-fill.crit { background: var(--red); }
 
 .severity-track { display: flex; gap: 2px; height: 6px; }
-.severity-tick { flex: 1; border-radius: 1px; background: rgba(255,255,255,0.05); transition: background 0.3s; }
+.severity-tick { 
+  flex: 1; 
+  border-radius: 1px; 
+  background: rgba(255,255,255,0.05); 
+  transition: background 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s;
+  transform-origin: bottom;
+}
+.severity-tick.active { animation: popTick 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .severity-tick.active.low { background: var(--teal); }
 .severity-tick.active.med { background: var(--amber); }
 .severity-tick.active.high { background: var(--red); }

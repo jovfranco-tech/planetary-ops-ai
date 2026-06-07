@@ -36,7 +36,11 @@ function WM({ k, full, value, unit, kind = "plain" }: WMProps) {
       {kind === "risk" && animated && (
         <div className="severity-track" style={{ marginTop: "6px" }}>
           {[...Array(5)].map((_, i) => (
-            <div key={i} className={`severity-tick ${(n as number) > i * 20 ? "active " + cls : ""}`} />
+            <div 
+              key={i} 
+              className={`severity-tick ${(n as number) > i * 20 ? "active " + cls : ""}`} 
+              style={{ animationDelay: `${i * 100}ms` }}
+            />
           ))}
         </div>
       )}

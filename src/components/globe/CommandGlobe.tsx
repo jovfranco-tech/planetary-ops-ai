@@ -7,6 +7,7 @@ import { projectLiveGlobe } from "../../engine/liveGlobeProjection";
 import { getScenario } from "../../engine/scenarioEngine";
 import * as THREE from "three";
 import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { OrbitLayer } from "./OrbitLayer";
 import { DataModeLegend } from "./DataModeLegend";
 import { EnterpriseFootprintOverlay } from "./EnterpriseFootprintOverlay";
@@ -168,6 +169,29 @@ export function CommandGlobe() {
         cloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
         cloudMesh.name = "cloudLayer";
         scene.add(cloudMesh);
+      }
+
+      // Topography (Displacement Map)
+      const globeMaterial = (g as any).globeMaterial?.() as THREE.MeshPhongMaterial;
+      if (globeMaterial && !globeMaterial.displacementMap) {
+        globeMaterial.displacementMap = new THREE.TextureLoader().load(GLOBE_BUMP_URL);
+        globeMaterial.displacementScale = 1.2; // Extrude mountains
+      }
+
+      // Cinematic Effects (Bloom)
+      const composer = (g as any).postProcessingComposer?.();
+      if (composer) {
+        let hasBloom = false;
+        composer.passes.forEach((p: any) => { if (p instanceof UnrealBloomPass) hasBloom = true; });
+        if (!hasBloom) {
+          const bloomPass = new UnrealBloomPass(
+            new THREE.Vector2(window.innerWidth, window.innerHeight),
+            1.2, // strength
+            0.4, // radius
+            0.85 // threshold
+          );
+          composer.addPass(bloomPass);
+        }
       }
 
       // Setup WebXR

@@ -53,11 +53,24 @@ export function AICopilot() {
     setMessages((m) => [...m, { from: "user", text: trimmed }]);
     setTyping(true);
 
+    const speakText = (msg: string) => {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(msg);
+      utterance.lang = lang === "es" ? "es-MX" : "en-US";
+      utterance.rate = 1.05;
+      utterance.pitch = 0.95;
+      window.speechSynthesis.speak(utterance);
+    };
+
     const performFallback = async (err?: any) => {
       if (err) console.error("LLM Agent failed, falling back:", err);
       const result = await runCopilot(trimmed, lang, { metrics, scenario });
       if (result.scenarioId) runScenario(result.scenarioId);
       if ((result as any).action === "clear_scenario") clearScenario();
+      const speechText = result.report?.lines.find(l => l.k === "Executive Summary" || l.k === "Resumen Ejecutivo")?.v || result.note || "Action completed.";
+      speakText(speechText);
+
       setMessages((m) => [
         ...m,
         result.report
@@ -79,7 +92,10 @@ export function AICopilot() {
           clearScenario();
         }
 
-        setMessages((m) => [
+        const speechText = result.report?.lines.find(l => l.k === "Executive Summary" || l.k === "Resumen Ejecutivo")?.v || result.note || "Action completed.";
+      speakText(speechText);
+
+      setMessages((m) => [
           ...m,
           result.report 
             ? { from: "bot", report: result.report, mode: "llm" }

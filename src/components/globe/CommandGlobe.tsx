@@ -297,8 +297,8 @@ export function CommandGlobe() {
             globeImageUrl={thermalMode ? GLOBE_BUMP_URL : GLOBE_TEXTURE_URL}
             bumpImageUrl={perfMode === "high" ? GLOBE_BUMP_URL : undefined}
             showAtmosphere={perfMode === "high"}
-            atmosphereColor="#5fb0ff"
-            atmosphereAltitude={0.3}
+            atmosphereColor={scenarioId === "geomagnetic-storm" ? "#ff00ff" : "#5fb0ff"}
+            atmosphereAltitude={scenarioId === "geomagnetic-storm" ? 0.35 : 0.15}
             /* points */
             pointsData={combinedPoints}
             pointLat="lat"

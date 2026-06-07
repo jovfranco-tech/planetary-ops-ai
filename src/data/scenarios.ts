@@ -28,6 +28,41 @@ function opt(
 
 export const SCENARIOS: Scenario[] = [
   {
+    id: "geomagnetic-storm",
+    layer: "space",
+    risk: "Critical",
+    title: { en: "X-Class Geomagnetic Storm (CME)", es: "Tormenta Geomagnética Clase-X (CME)" },
+    summary: {
+      en: "Massive coronal mass ejection has hit Earth. Severe atmospheric drag and radiation in LEO. Starlink/OneWeb constellations dropping offline.",
+      es: "Eyección de masa coronal masiva ha impactado la Tierra. Alta fricción y radiación en LEO. Constelaciones satelitales colapsando.",
+    },
+    affectedRoutes: ["sat-us-eu", "sat-eu-as", "sat-as-us"],
+    reroute: ["r1", "r4", "r8"],
+    degradedNodes: ["sat1", "sat2", "sat3", "sat4", "sat5"],
+    affectedRegions: ["nyc", "ldn", "tok", "sao", "mex"],
+    affectedServices: ["data", "edge", "iot"],
+    aiWorkflows: ["surv", "logistics"],
+    businessImpact: {
+      en: "Total blackout of global LEO-based telemetry. Maritime and remote ops disconnected. Secondary terrestrial backbones saturated.",
+      es: "Apagón total de la telemetría LEO global. Operaciones marítimas y remotas desconectadas. Backbones terrestres secundarios saturados.",
+    },
+    metrics: {
+      resilience: 22, aiRisk: 88, cyberRisk: 12, continuity: 41,
+      incidents: 1, degradedRegions: 5, servicesAffected: 4, providersDegraded: 0,
+      exposure: { en: "$18.5M / day", es: "18,5 M$ / día" }, rto: { en: "Unknown", es: "Desconocido" },
+    },
+    options: [
+      opt("A", "Route traffic to terrestrial cables", "Enrutar a cables terrestres", 30, "High", "High", "Low", "Instant", false, true),
+      opt("B", "Safe mode for surviving satellites", "Modo seguro en satélites vivos", 10, "Critical", "Critical", "Moderate", "Minutes", false, false),
+      opt("C", "Power down all remote IoT nodes", "Apagar nodos IoT remotos", 50, "Moderate", "Critical", "High", "Hours", true, false),
+    ],
+    next: {
+      h24: { en: "Monitor CME dissipation, negotiate terrestrial bandwidth.", es: "Monitorear disipación de CME, negociar ancho de banda terrestre." },
+      h48: { en: "Assess permanent LEO hardware damage.", es: "Evaluar daño permanente en hardware LEO." },
+      h72: { en: "Launch replacement hardware if necessary.", es: "Lanzar hardware de reemplazo si es necesario." }
+    }
+  },
+  {
     id: "cable_cut",
     layer: "backbone",
     risk: "High",

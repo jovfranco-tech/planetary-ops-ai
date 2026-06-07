@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useCommandCenterStore, useMetrics } from "../../store/useCommandCenterStore";
 import { globalStatus } from "../../engine/riskEngine";
 import { t } from "../../i18n";
+import { playHover, playClick } from "../../utils/audio";
 
 /** Top command bar: identity, global status, language and copilot controls. */
 export function TopBar() {
@@ -50,7 +51,8 @@ export function TopBar() {
           className={"icon-btn" + (useCommandCenterStore(s => s.perfMode) === "low" ? " on" : "")} 
           title="Performance Mode" 
           aria-label="Toggle Performance Mode"
-          onClick={useCommandCenterStore(s => s.togglePerfMode)}
+          onMouseEnter={playHover}
+          onClick={() => { playClick(); useCommandCenterStore.getState().togglePerfMode(); }}
         >
           {useCommandCenterStore(s => s.perfMode) === "high" ? "⚡️" : "🔋"}
         </button>
@@ -58,25 +60,27 @@ export function TopBar() {
           className={"icon-btn" + (useCommandCenterStore(s => s.zenMode) ? " on" : "")} 
           title="Zen Mode" 
           aria-label="Toggle Zen Mode"
-          onClick={useCommandCenterStore(s => s.toggleZenMode)}
+          onMouseEnter={playHover}
+          onClick={() => { playClick(); useCommandCenterStore.getState().toggleZenMode(); }}
         >
           {useCommandCenterStore(s => s.zenMode) ? "▣" : "▤"}
         </button>
         <div className="lang-toggle">
-          <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>
+          <button className={lang === "en" ? "on" : ""} onMouseEnter={playHover} onClick={() => { playClick(); setLang("en"); }}>
             EN
           </button>
-          <button className={lang === "es" ? "on" : ""} onClick={() => setLang("es")}>
+          <button className={lang === "es" ? "on" : ""} onMouseEnter={playHover} onClick={() => { playClick(); setLang("es"); }}>
             ES
           </button>
         </div>
         <button
           className={"cop-trigger" + (copilotOpen ? " active" : "")}
-          onClick={toggleCopilot}
+          onMouseEnter={playHover}
+          onClick={() => { playClick(); toggleCopilot(); }}
         >
           ✦ {t("copilot", lang)}
         </button>
-        <button className="icon-btn" title="info" aria-label="information" onClick={openDisclaimer}>
+        <button className="icon-btn" title="info" aria-label="information" onMouseEnter={playHover} onClick={() => { playClick(); openDisclaimer(); }}>
           ⓘ
         </button>
       </div>

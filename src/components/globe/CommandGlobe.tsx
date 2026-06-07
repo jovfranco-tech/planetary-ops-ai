@@ -5,6 +5,7 @@ import { GLOBE_BUMP_URL, GLOBE_TEXTURE_URL, INITIAL_POV } from "../../utils/cons
 import { projectGlobe } from "../../engine/globeProjection";
 import { projectLiveGlobe } from "../../engine/liveGlobeProjection";
 import { getScenario } from "../../engine/scenarioEngine";
+import * as THREE from "three";
 import { OrbitLayer } from "./OrbitLayer";
 import { DataModeLegend } from "./DataModeLegend";
 import { EnterpriseFootprintOverlay } from "./EnterpriseFootprintOverlay";
@@ -115,10 +116,40 @@ export function CommandGlobe() {
 
     try {
       const scene = g.scene();
-      scene.traverse((o) => {
-        const light = o as { isDirectionalLight?: boolean; isAmbientLight?: boolean; intensity?: number };
-        if (light.isDirectionalLight) light.intensity = 2.2;
-        if (light.isAmbientLight) light.intensity = 2.6;
+      
+      // Calculate sun position based on UTC
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const diff = (now.getTime() - start.getTime()) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+      const day = Math.floor(diff / (1000 * 60 * 60 * 24));
+      
+      // Declination of the sun (Latitude)
+      const declination = -23.45 * Math.cos((360 / 365) * (day + 10) * (Math.PI / 180));
+      const lat = declination;
+      
+      // UTC hours to Longitude
+      const hours = now.getUTCHours() + now.getUTCMinutes() / 60;
+      let lng = (12 - hours) * 15;
+      
+      // Get cartesian coords for the sun (at distance 4x globe radius)
+      const sunCoords = g.getCoords(lat, lng, 4);
+
+      let sunLight = scene.getObjectByName("sunLight") as THREE.DirectionalLight;
+      if (!sunLight) {
+        sunLight = new THREE.DirectionalLight(0xffffff, 3.5);
+        sunLight.name = "sunLight";
+        scene.add(sunLight);
+      }
+      sunLight.position.set(sunCoords.x, sunCoords.y, sunCoords.z);
+
+      // Disable default camera-attached light and reduce ambient light
+      scene.traverse((o: any) => {
+        if (o.isDirectionalLight && o.name !== "sunLight") {
+          o.intensity = 0; // Turn off default light that washes out shadows
+        }
+        if (o.isAmbientLight) {
+          o.intensity = 0.15; // Deep shadow on the night side
+        }
       });
     } catch {
       /* lighting tweak is best-effort */

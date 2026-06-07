@@ -20,6 +20,45 @@ export function CopilotCommandInput({ lang, onSubmit }: CopilotCommandInputProps
     onSubmit(text);
   };
 
+  const [listening, setListening] = useState(false);
+
+  const startListening = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert(lang === "es" ? "Reconocimiento de voz no soportado en este navegador." : "Speech recognition not supported in this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = lang === "es" ? "es-MX" : "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      setListening(true);
+    };
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+      // Auto submit after half a second to let the user see it
+      setTimeout(() => {
+        onSubmit(transcript);
+        setInput("");
+      }, 500);
+    };
+
+    recognition.onerror = () => {
+      setListening(false);
+    };
+
+    recognition.onend = () => {
+      setListening(false);
+    };
+
+    recognition.start();
+  };
+
   return (
     <>
       <div className="cop-suggest">
@@ -34,6 +73,14 @@ export function CopilotCommandInput({ lang, onSubmit }: CopilotCommandInputProps
       </div>
 
       <div className="cop-input">
+        <button 
+          className={`icon-btn mic-btn ${listening ? "listening" : ""}`} 
+          onClick={startListening} 
+          aria-label="voice input"
+          style={{ padding: "0 8px", color: listening ? "var(--red)" : "inherit" }}
+        >
+          {listening ? "🎙" : "🎤"}
+        </button>
         <input
           value={input}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}

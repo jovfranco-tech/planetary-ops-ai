@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCommandCenterStore } from "../store/useCommandCenterStore";
+import { useCommandCenterStore, useMetrics } from "../store/useCommandCenterStore";
 import { TopBar } from "../components/layout/TopBar";
 import { Sidebar } from "../components/layout/Sidebar";
 import { Footer } from "../components/layout/Footer";
@@ -15,6 +15,8 @@ import { AICopilot } from "../components/copilot/AICopilot";
 import { LiveFeedMonitor } from "../components/ai/LiveFeedMonitor";
 import { useDataSourceStore } from "../dataSources/useDataSources";
 import { t } from "../i18n";
+import { playAlert } from "../utils/audio";
+import { globalStatus } from "../engine/riskEngine";
 
 /** The cinematic command-center layout: top bar, three columns, decision bar. */
 export function AppShell() {
@@ -25,6 +27,8 @@ export function AppShell() {
   const zenMode = useCommandCenterStore((s) => s.zenMode);
   
   const fetchDataSources = useDataSourceStore((s) => s.fetchDataSources);
+  const metrics = useMetrics();
+  const status = globalStatus(metrics);
 
   /* Load real data sources on mount */
   useEffect(() => {
@@ -35,6 +39,13 @@ export function AppShell() {
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
+  /* Trigger alert sound on critical status */
+  useEffect(() => {
+    if (status === "critical") {
+      playAlert();
+    }
+  }, [status]);
 
   return (
     <div className="app">

@@ -1,5 +1,7 @@
 # Planetary Operations — AI Command Center
 
+[Live Demo](https://planetary-ops-ai.vercel.app)
+
 **AI-native decision simulator for global digital infrastructure, cyber resilience, AI dependency resilience and business continuity.**
 
 A portfolio-grade, single-page command center that renders global digital infrastructure on a cinematic 3D globe and lets an executive *simulate* incidents — submarine-cable cuts, cloud-region degradation, identity-provider outages, ransomware, and AI-provider failures — then see the projected impact on resilience, continuity, AI dependency and cyber risk, with board-ready decision options and a deterministic AI copilot.

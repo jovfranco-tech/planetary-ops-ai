@@ -153,6 +153,15 @@ export const en = {
   liveFeedUnavailable: "Live feed unavailable",
   lastKnownUnavailable: "Last known data unavailable",
 
+  globeIntelligence: "Globe Intelligence",
+  dataSource: "Data Source",
+  lastUpdated: "Last updated",
+  contextOnly: "Context only",
+  notAffectDecision: "Does not affect decision model",
+  curatedDemoRoute: "Curated demo route",
+  notOfficialMap: "Not an official/authoritative cable map",
+  scenarioActiveBanner: "Scenario simulation active — live feeds provide context only.",
+
   disclaimers: [
     "Simulated infrastructure & AI-dependency data combined with optional real-world public data feeds.",
     "No real company-sensitive data is used.",

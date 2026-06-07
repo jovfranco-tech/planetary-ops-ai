@@ -46,7 +46,7 @@ export function DataSourceHealthPanel() {
   };
 
   return (
-    <div className="glass panel-pad health-panel" style={{ flex: "0 0 auto", marginTop: "14px" }}>
+    <div className="glass panel-pad health-panel" style={{ flex: "0 0 auto", height: "auto" }}>
       <div className="phead">
         <div className="ic" style={{ color: "var(--cyan)", background: "rgba(54, 214, 231, 0.08)" }}>📡</div>
         <div className="grow">

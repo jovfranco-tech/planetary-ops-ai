@@ -5,6 +5,7 @@ import { metricBarColor, metricClass, type MetricKind } from "../../utils/scorin
 import { t, tv } from "../../i18n";
 import { useCountUp } from "../common/useCountUp";
 import { useDataSourceStore } from "../../dataSources/useDataSources";
+import { SourceHealthCompact } from "./SourceHealthCompact";
 
 interface WMProps {
   k: string;
@@ -112,6 +113,7 @@ export function ExecutiveWarRoom() {
           <span className="ps-k">{t("recShort", lang)}</span>
           <span className="ps-rec-v">{recTxt}</span>
         </div>
+        <SourceHealthCompact />
       </div>
     </div>
   );

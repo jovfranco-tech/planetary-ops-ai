@@ -155,6 +155,15 @@ export const es: Record<TranslationKey, string | readonly string[]> = {
   liveFeedUnavailable: "Feed en vivo no disponible",
   lastKnownUnavailable: "Últimos datos no disponibles",
 
+  globeIntelligence: "Inteligencia del globo",
+  dataSource: "Fuente de datos",
+  lastUpdated: "Última actualización",
+  contextOnly: "Sólo contexto",
+  notAffectDecision: "No afecta el modelo de decisión",
+  curatedDemoRoute: "Ruta curada de demostración",
+  notOfficialMap: "No es un mapa oficial/autoritativo de cables",
+  scenarioActiveBanner: "Simulación de escenario activa — las fuentes en vivo sólo aportan contexto.",
+
   disclaimers: [
     "Datos simulados de infraestructura combinados con feeds reales de datos públicos opcionales.",
     "Sin datos sensibles reales de empresa.",

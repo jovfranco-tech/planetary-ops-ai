@@ -111,6 +111,13 @@ Further directions: real telemetry ingestion to replace simulated baselines, sce
 
 ## Release notes
 
+### v1.2.0 — Live Globe Intelligence
+
+- **Live Globe Projection Engine**: Extends the deterministic 3D globe to dynamically render real-time telemetry natively: pulsing animated rings for live Cloudflare anomalies, precise orbital path rendering for active satellites (ISS, Starlink, GPS), fixed equatorial nodes for live AI provider status, and curved sweeping arcs for curated physical submarine cables.
+- **Visual Safety & Data Mode Legend**: Added a `DataModeLegend` overlay and contextual HTML node tooltips distinguishing between `Live`, `Cached`, `Simulated`, `Curated`, and `Unavailable` data sources. Assures the deterministic decision model remains distinct from live situational awareness context.
+- **Compact UI Footprint**: Streamlined the layout by merging the redundant data sources sidebar into a sleek `SourceHealthCompact` component directly in the Executive War Room.
+- **Scenario Banner Protection**: A bold global banner activates automatically during scenario simulation to clearly assert that real-time feeds are degraded to "context only".
+
 ### v1.1.0 — Real Data Foundation
 
 - **Serverless API Routes**: Added `/api/radar-outages`, `/api/satellites`, and `/api/ai-status` in `/api` to fetch and normalize Cloudflare Radar, CelesTrak, and AI status data.

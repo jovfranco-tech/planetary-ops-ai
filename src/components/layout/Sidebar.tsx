@@ -12,7 +12,7 @@ export function Sidebar() {
   const resetLayers = useCommandCenterStore((s) => s.resetLayers);
 
   return (
-    <div className="glass panel-pad">
+    <div className="glass panel-pad" style={{ flex: 1, minHeight: 0 }}>
       <div className="phead">
         <div className="ic">▦</div>
         <div className="grow">

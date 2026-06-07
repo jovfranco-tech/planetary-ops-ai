@@ -239,27 +239,28 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
 
     // ── Market presence dots (112 points) ──
     for (const m of SIMULATED_MARKETS) {
-      // IMPORTANT: react-globe.gl uses Three.js — rgba() alpha is IGNORED for points.
-      // Must use solid hex colors only. Use brightness to distinguish tiers.
+      // Colors MUST be bright enough to contrast against the dark night-earth texture.
+      // Previous attempts with muted teal (#4d9e87) blended into the ocean.
+      // Altitude must be high enough for dots to float visibly above the surface.
       let color: string;
       let rad: number;
       let alt: number;
 
       switch (m.marketTier) {
         case "critical_market":
-          color = "#7ee0c0";  // bright teal
-          rad = 0.65;
-          alt = 0.018;
+          color = "#5be0a8";  // bright green — stands out sharply
+          rad = 0.7;
+          alt = 0.035;
           break;
         case "support_market":
-          color = "#5aad94";  // muted teal
-          rad = 0.45;
-          alt = 0.014;
+          color = "#36d6e7";  // bright cyan — matches brand, highly visible
+          rad = 0.5;
+          alt = 0.028;
           break;
         default: // country_presence
-          color = "#4d9e87";  // darker teal — still clearly visible
-          rad = 0.5;
-          alt = 0.015;
+          color = "#7ee0c0";  // teal — bright enough to see on dark globe
+          rad = 0.55;
+          alt = 0.025;
           break;
       }
 
@@ -280,17 +281,16 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
 
       if (isCritical) {
         color = COLORS.red;
-        rad = m.marketTier === "critical_market" ? 0.75 : 0.6;
+        rad = m.marketTier === "critical_market" ? 0.8 : 0.65;
         rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.red), maxR: 2.8, speed: 1.8, period: 1000 });
       } else if (isDegraded) {
         color = COLORS.amber;
-        rad = m.marketTier === "critical_market" ? 0.7 : 0.55;
+        rad = m.marketTier === "critical_market" ? 0.75 : 0.6;
         if (m.marketTier === "critical_market") {
           rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.amber), maxR: 2.2, speed: 1.2, period: 1500 });
         }
       } else if (!scenario && (m.marketTier === "critical_market")) {
-        // Nominal glow for critical markets — subtle pulse
-        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("#7ee0c0"), maxR: 1.8, speed: 0.8, period: 2500 });
+        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("#5be0a8"), maxR: 2.0, speed: 0.8, period: 2500 });
       }
 
       points.push({
@@ -307,7 +307,6 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
     // ── Regional hubs (8 points + labels) ──
     for (const h of SIMULATED_HUBS) {
       let color: string = COLORS.cyan;
-      let rad = 1.0;
       let state: GlobeLabel["state"] = "";
 
       const inLatam = h.region === "LATAM";
@@ -342,8 +341,8 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
         lat: h.lat,
         lng: h.lng,
         color,
-        alt: 0.025,
-        rad,
+        alt: 0.04,
+        rad: 1.1,
         tip: tip(h.name, "REGIONAL HUB"),
       });
 

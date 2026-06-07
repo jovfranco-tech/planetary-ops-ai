@@ -111,14 +111,14 @@ Further directions: real telemetry ingestion to replace simulated baselines, sce
 
 ## Release notes
 
-### v1.3.0 — Real LLM Agent Backend
+### v1.3.0 — Gemini Agent Backend
 
-- **Serverless API Route (`/api/agent`)**: A secure Node.js serverless endpoint validating inputs and outputs using Zod. It acts as the orchestration layer between the React frontend and OpenAI/Anthropic APIs.
-- **Provider Choice & Failover**: The app prefers `OPENAI_API_KEY` but gracefully falls back to `ANTHROPIC_API_KEY`. If neither is available, the endpoint returns a structured fallback request.
-- **Security Controls**: Implemented strict prompt constraints ensuring the LLM acts purely as an executive decision-support copilot. It cannot perform real actions, invent monitoring facts, or expose hidden chain-of-thought. Input context is rigidly controlled.
-- **Frontend LLM Integration**: The `AICopilot` component attempts a `fetch` to `/api/agent`. If it succeeds, it renders the LLM's dynamically structured response with a `✦ LLM Agent` badge. If it fails, times out, or has no keys, it instantly drops back to the deterministic engine with a `⚬ Deterministic Fallback` badge.
+- **Serverless API Route (`/api/agent`)**: A secure Node.js serverless endpoint validating inputs and outputs using Zod. It acts as the orchestration layer between the React frontend and Gemini/OpenAI/Anthropic APIs.
+- **Provider Choice & Failover**: The app securely prioritizes `GEMINI_API_KEY` to power the Copilot using Gemini 1.5 Flash. It gracefully falls back to OpenAI or Anthropic if configured, and drops to deterministic mode if no keys are available.
+- **Security Controls**: Implemented strict prompt constraints ensuring the AI acts purely as an executive decision-support copilot. It cannot perform real actions, invent monitoring facts, or expose hidden chain-of-thought. Input context is rigidly controlled.
+- **Frontend LLM Integration**: The `AICopilot` component attempts a `fetch` to `/api/agent`. If it succeeds, it renders the AI's dynamically structured response with a `✦ LLM Agent` badge. If it fails, times out, or has no keys, it instantly drops back to the deterministic engine with a `⚬ Deterministic Fallback` badge.
 - **Responsible AI UI**: A persistent disclaimer is now visible in the Copilot pane: *"AI responses are decision-support only. Scenario metrics remain simulated. Human validation is required for real operations."*
-- **Vercel Env Var Setup**: To enable the LLM in production, simply add `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` to your Vercel project environment variables. No API keys are ever bundled into the frontend.
+- **Vercel Env Var Setup**: To enable the LLM in production, simply add `GEMINI_API_KEY` to your Vercel project environment variables. No API keys are ever bundled into the frontend.
 
 ### v1.2.0 — Live Globe Intelligence
 

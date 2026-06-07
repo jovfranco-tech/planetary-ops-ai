@@ -239,25 +239,26 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
 
     // ── Market presence dots (112 points) ──
     for (const m of SIMULATED_MARKETS) {
-      // Base visual sizing by tier — must be LARGE enough to see!
+      // IMPORTANT: react-globe.gl uses Three.js — rgba() alpha is IGNORED for points.
+      // Must use solid hex colors only. Use brightness to distinguish tiers.
       let color: string;
       let rad: number;
       let alt: number;
 
       switch (m.marketTier) {
         case "critical_market":
-          color = "#7ee0c0";  // solid teal — bright and visible
-          rad = 0.62;
+          color = "#7ee0c0";  // bright teal
+          rad = 0.65;
           alt = 0.018;
           break;
         case "support_market":
-          color = "rgba(126,224,192,0.7)";
-          rad = 0.42;
+          color = "#5aad94";  // muted teal
+          rad = 0.45;
           alt = 0.014;
           break;
         default: // country_presence
-          color = "rgba(126,224,192,0.55)";
-          rad = 0.48;
+          color = "#4d9e87";  // darker teal — still clearly visible
+          rad = 0.5;
           alt = 0.015;
           break;
       }
@@ -279,17 +280,17 @@ export function projectGlobe({ layers, scenario, lang }: GlobeInput): GlobeData 
 
       if (isCritical) {
         color = COLORS.red;
-        rad = m.marketTier === "critical_market" ? 0.75 : 0.55;
+        rad = m.marketTier === "critical_market" ? 0.75 : 0.6;
         rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.red), maxR: 2.8, speed: 1.8, period: 1000 });
       } else if (isDegraded) {
         color = COLORS.amber;
-        rad = m.marketTier === "critical_market" ? 0.65 : 0.5;
+        rad = m.marketTier === "critical_market" ? 0.7 : 0.55;
         if (m.marketTier === "critical_market") {
           rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade(COLORS.amber), maxR: 2.2, speed: 1.2, period: 1500 });
         }
       } else if (!scenario && (m.marketTier === "critical_market")) {
         // Nominal glow for critical markets — subtle pulse
-        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("rgba(126,224,192,0.4)"), maxR: 1.8, speed: 0.8, period: 2500 });
+        rings.push({ lat: m.lat, lng: m.lng, ringColor: ringFade("#7ee0c0"), maxR: 1.8, speed: 0.8, period: 2500 });
       }
 
       points.push({

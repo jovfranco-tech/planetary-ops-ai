@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Globe, { type GlobeMethods } from "react-globe.gl";
 import { useCommandCenterStore, useScenario } from "../../store/useCommandCenterStore";
-import { GLOBE_BUMP_URL, GLOBE_TEXTURE_URL, INITIAL_POV } from "../../utils/constants";
+import { GLOBE_BUMP_URL, GLOBE_TEXTURE_URL, INITIAL_POV, COLORS } from "../../utils/constants";
 import { projectGlobe } from "../../engine/globeProjection";
 import { OrbitLayer } from "./OrbitLayer";
+import { useDataSourceStore } from "../../dataSources/useDataSources";
+import { propagateSatellite } from "../../dataSources/satelliteAdapter";
+import { getOutageCoords } from "../../dataSources/radarAdapter";
+import { ringFade } from "../../utils/geo";
 
 function webglAvailable(): boolean {
   try {
@@ -47,6 +51,62 @@ export function CommandGlobe() {
     () => projectGlobe({ layers, scenario, lang }),
     [layers, scenario, lang],
   );
+
+  const satellites = useDataSourceStore((s) => s.satellites);
+  const outages = useDataSourceStore((s) => s.outages);
+  const [timeTick, setTimeTick] = useState(0);
+
+  // Satellite orbit tick animation
+  useEffect(() => {
+    const timer = setInterval(() => setTimeTick((t) => t + 1), 1500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const enrichedPoints = useMemo(() => {
+    const pts = [...data.points];
+    if (layers.has("space")) {
+      satellites.forEach((sat) => {
+        const pos = propagateSatellite(sat);
+        pts.push({
+          id: `sat-${sat.id}`,
+          lat: pos.lat,
+          lng: pos.lng,
+          color: "#8b9bff", // Space layer color
+          alt: pos.altitude, // high above the earth
+          rad: 0.36,
+          tip: `<div class="node-tip">
+            <span class="nt-k">SATELLITE (${sat.category.toUpperCase()})</span>
+            <b>${sat.name}</b><br/>
+            <span style="font-size: 8px; color: var(--faint);">NORAD ID: ${sat.id}</span><br/>
+            <span style="font-size: 8px; color: var(--muted);">Status: ${sat.operationalStatus}</span>
+          </div>`
+        });
+      });
+    }
+    return pts;
+  }, [data.points, layers, satellites, timeTick]);
+
+  const enrichedRings = useMemo(() => {
+    const rgs = [...data.rings];
+    if (!scenario && (layers.has("backbone") || layers.has("cyber"))) {
+      outages.forEach((out) => {
+        const coords = getOutageCoords(out);
+        if (coords) {
+          const isHigh = out.severity === "high" || out.severity === "critical";
+          rgs.push({
+            lat: coords.lat,
+            lng: coords.lng,
+            ringColor: ringFade(isHigh ? COLORS.red : COLORS.amber),
+            maxR: isHigh ? 5.2 : 3.8,
+            speed: isHigh ? 2.0 : 1.4,
+            period: isHigh ? 1000 : 1500
+          });
+        }
+      });
+    }
+    return rgs;
+  }, [data.rings, layers, outages, scenario]);
+
 
   /* Track container size. */
   useEffect(() => {
@@ -118,7 +178,7 @@ export function CommandGlobe() {
             atmosphereColor="#5fb0ff"
             atmosphereAltitude={0.3}
             /* points */
-            pointsData={data.points}
+            pointsData={enrichedPoints}
             pointLat="lat"
             pointLng="lng"
             pointAltitude="alt"
@@ -137,7 +197,7 @@ export function CommandGlobe() {
             arcAltitudeAutoScale={0.42}
             arcsTransitionDuration={400}
             /* rings */
-            ringsData={data.rings}
+            ringsData={enrichedRings}
             ringColor="ringColor"
             ringMaxRadius="maxR"
             ringPropagationSpeed="speed"

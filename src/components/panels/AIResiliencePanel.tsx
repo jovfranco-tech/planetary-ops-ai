@@ -7,6 +7,19 @@ import {
   workflowStatus,
 } from "../../engine/aiResilienceEngine";
 import { t, tv } from "../../i18n";
+import { useDataSourceStore } from "../../dataSources/useDataSources";
+
+const mapStoreId = (id: string): string => {
+  switch (id) {
+    case "openai": return "openai";
+    case "claude": return "anthropic";
+    case "gemini": return "gemini";
+    case "mscop": return "ms-copilot";
+    case "ghcop": return "github-copilot";
+    case "azoai": return "azure-openai";
+    default: return "";
+  }
+};
 
 /** AI-as-critical-infrastructure module: concentration, fallback, governance. */
 export function AIResiliencePanel() {
@@ -14,6 +27,7 @@ export function AIResiliencePanel() {
   const scenario = useScenario();
   const metrics = useMetrics();
   const [tab, setTab] = useState<"providers" | "workflows">("providers");
+  const realProviders = useDataSourceStore((s) => s.aiProviders);
 
   const summary = summarizeAIResilience(metrics.aiRisk, scenario);
   const concLabel = summary.concentrationHigh
@@ -25,6 +39,13 @@ export function AIResiliencePanel() {
       : "Moderate";
   const workflows = getPanelWorkflows(lang);
   const localStatus = t("ready", lang);
+
+  const getDotClass = (status: string) => {
+    if (status === "operational") return "green";
+    if (status === "degraded" || status === "partial_outage") return "amber pulse";
+    if (status === "major_outage") return "red pulse";
+    return "faint";
+  };
 
   return (
     <div className="glass panel-pad">
@@ -100,21 +121,29 @@ export function AIResiliencePanel() {
               </span>
             </div>
             <div className="conc-bars">
-              {PROVIDERS.map((p) => (
-                <div className="conc-row" key={p.id}>
-                  <div className="cl">{p.label}</div>
-                  <div className="conc-track">
-                    <i
-                      style={{
-                        width: p.concentration * 2.5 + "%",
-                        background: p.tone,
-                        boxShadow: "0 0 7px " + p.tone,
-                      }}
-                    />
+              {PROVIDERS.map((p) => {
+                const realP = realProviders.find((rp) => rp.id === mapStoreId(p.id));
+                const statusVal = realP ? realP.status : "operational";
+                const dotClass = getDotClass(statusVal);
+                return (
+                  <div className="conc-row" key={p.id}>
+                    <div className="cl" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span className={"dot " + dotClass} style={{ width: "6px", height: "6px" }} title={realP ? `Live status: ${realP.status} (${realP.attribution})` : "Simulated"} />
+                      {p.label}
+                    </div>
+                    <div className="conc-track">
+                      <i
+                        style={{
+                          width: p.concentration * 2.5 + "%",
+                          background: p.tone,
+                          boxShadow: "0 0 7px " + p.tone,
+                        }}
+                      />
+                    </div>
+                    <div className="cv">{p.concentration}%</div>
                   </div>
-                  <div className="cv">{p.concentration}%</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

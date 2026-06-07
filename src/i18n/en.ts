@@ -137,13 +137,28 @@ export const en = {
   footer:
     "Portfolio-grade AI-native command center — global infrastructure resilience, cloud/cyber dependency mapping, AI services continuity, executive crisis decisioning & responsible AI governance.",
   builtBy: "Built by Jovan Franco — Technology Transformation Leader",
+  dataFeeds: "Data Feed Health",
+  feedStatus: "Status",
+  feedSource: "Source",
+  feedUpdated: "Updated",
+  feedMode: "Type",
+  feedConfidence: "Confidence",
+  feedLive: "Live",
+  feedCached: "Cached",
+  feedSimulated: "Simulated",
+  feedCurated: "Curated",
+  feedUnavailable: "Unavailable",
+  feedLoading: "Refreshing feeds...",
+  baselineActive: "Simulated baseline active",
+  liveFeedUnavailable: "Live feed unavailable",
+  lastKnownUnavailable: "Last known data unavailable",
 
   disclaimers: [
-    "Simulated infrastructure & AI-dependency data.",
-    "No real company-sensitive data.",
-    "No real-time production incident monitoring in v0.1.",
+    "Simulated infrastructure & AI-dependency data combined with optional real-world public data feeds.",
+    "No real company-sensitive data is used.",
+    "Feeds (Cloudflare, CelesTrak, AI status) are context-only; not for production incident monitoring.",
     "AI recommendations are decision-support only.",
-    "Human validation required for real operations.",
+    "Human validation is required for real operations.",
   ],
 } as const;
 

@@ -4,6 +4,7 @@ import { derivePosture } from "../../engine/riskEngine";
 import { metricBarColor, metricClass, type MetricKind } from "../../utils/scoring";
 import { t, tv } from "../../i18n";
 import { useCountUp } from "../common/useCountUp";
+import { useDataSourceStore } from "../../dataSources/useDataSources";
 
 interface WMProps {
   k: string;
@@ -40,6 +41,7 @@ export function ExecutiveWarRoom() {
   const lang = useCommandCenterStore((s) => s.lang);
   const scenario = useScenario();
   const metrics = useMetrics();
+  const lastFetchTime = useDataSourceStore((s) => s.lastFetchTime);
 
   const rec = scenario ? recommendedOption(scenario) : null;
   const posture = derivePosture(scenario);
@@ -64,10 +66,15 @@ export function ExecutiveWarRoom() {
         </div>
         <div className="grow">
           <div className="tt">{t("warRoom", lang)}</div>
-          <div className="tsub">
+          <div className="tsub" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             {scenario
               ? t("simState", lang) + " · " + scenario.risk.toUpperCase()
               : t("liveOps", lang)}
+            {lastFetchTime && (
+              <span className="live-data-badge" style={{ fontSize: "8px", color: "var(--green)", border: "1px solid rgba(91, 224, 168, 0.4)", background: "rgba(91, 224, 168, 0.08)", padding: "1px 5px", borderRadius: "4px", fontFamily: "var(--mono)" }}>
+                LIVE
+              </span>
+            )}
           </div>
         </div>
         <div className={"dot " + (metrics.incidents > 0 ? "red pulse" : "green")} />

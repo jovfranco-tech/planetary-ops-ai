@@ -12,6 +12,7 @@ export function normalizeCloudflareOutages(apiData: any): RealPublicSignal[] {
       attribution: apiData?.attribution || "Cloudflare Radar",
       confidence: "high",
       summary: apiData?.errorMessage || "No live outage feeds available.",
+      status: "unavailable",
       affectsGlobe: false,
       affectsDecisionModel: false,
       contextOnly: true
@@ -29,6 +30,7 @@ export function normalizeCloudflareOutages(apiData: any): RealPublicSignal[] {
     attribution: "Cloudflare Radar API",
     confidence: "high",
     summary: o.summary || `Network outage at ${o.locationName}`,
+    status: o.severity === "critical" ? "major outage" : "partial outage",
     impactScope: o.scope || o.locationName,
     normalizedSeverity: (o.severity === "high" || o.severity === "critical") ? "critical" 
                       : (o.severity === "medium" ? "medium" : "low") as SignalSeverity,
@@ -52,6 +54,7 @@ export function normalizeCelesTrak(apiData: any): RealPublicSignal[] {
     attribution: attribution,
     confidence: "high",
     summary: `Tracking ${apiData?.satellites?.length || 0} reference satellites in orbit.`,
+    status: "operational",
     affectsGlobe: true, // we render the actual satellites
     affectsDecisionModel: false,
     contextOnly: true
@@ -70,6 +73,7 @@ export function normalizeAIStatus(apiData: any): RealPublicSignal[] {
     attribution: p.attribution,
     confidence: p.sourceMode === "live" ? "high" : "medium",
     summary: p.lastIncidentSummary || `Status: ${p.status}`,
+    status: p.status || "unknown",
     normalizedSeverity: p.status === "operational" ? "low" : (p.status === "degraded" ? "medium" : "critical"),
     affectsGlobe: false,
     affectsDecisionModel: false,
@@ -88,6 +92,7 @@ export function normalizeHealth(apiData: any): RealPublicSignal[] {
     attribution: "Vercel /api/health",
     confidence: "high",
     summary: `App ${apiData?.app} running on v${apiData?.version}. Status: ${apiData?.status}`,
+    status: apiData?.status === "ok" ? "operational" : "degraded",
     normalizedSeverity: apiData?.status === "ok" ? "low" : "critical",
     affectsGlobe: false,
     affectsDecisionModel: false,
@@ -107,6 +112,7 @@ export function normalizeCloudStatus(apiData: any): RealPublicSignal[] {
     attribution: p.attribution,
     confidence: p.sourceMode === "live" ? "high" : "medium",
     summary: `${p.name} status: ${p.status || "Reference mode"}`,
+    status: p.status || "unknown",
     normalizedSeverity: "low",
     affectsGlobe: false,
     affectsDecisionModel: false,
@@ -126,6 +132,7 @@ export function normalizeSaaSStatus(apiData: any): RealPublicSignal[] {
     attribution: p.attribution,
     confidence: "medium",
     summary: `${p.name} status: ${p.status || "Reference mode"}`,
+    status: p.status || "unknown",
     normalizedSeverity: "low",
     affectsGlobe: false,
     affectsDecisionModel: false,

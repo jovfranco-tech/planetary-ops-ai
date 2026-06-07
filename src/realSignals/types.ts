@@ -21,6 +21,7 @@ export interface RealPublicSignal {
   confidence: SignalConfidence;
   freshnessSeconds?: number;
   summary: string;
+  status?: string; // operational, degraded, partial outage, major outage, unknown
   impactScope?: string;
   normalizedSeverity?: SignalSeverity;
   

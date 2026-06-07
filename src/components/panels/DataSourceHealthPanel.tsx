@@ -67,7 +67,7 @@ export function DataSourceHealthPanel() {
         </button>
       </div>
 
-      <div style={{ fontSize: "10px", color: "var(--text-dim)", marginBottom: "8px", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "8px" }}>
+      <div style={{ fontSize: "11px", color: "var(--text-bright)", marginBottom: "12px", background: "rgba(255,255,255,0.05)", padding: "8px", borderRadius: "4px", borderLeft: "2px solid var(--cyan)" }}>
         {t("scenarioBoundaryDesc", lang)}
       </div>
 
@@ -82,31 +82,35 @@ export function DataSourceHealthPanel() {
                 {category}
               </div>
               {catSignals.map((h) => (
-                <div key={h.id} className="health-row">
-                  <div className="health-meta">
-                    <div className="health-name">{h.sourceName}</div>
-                  </div>
-                  
-                  <div className="health-status-container">
+                <div key={h.id} className="health-row" style={{ display: "flex", flexDirection: "column", padding: "10px", background: "rgba(255,255,255,0.03)", borderRadius: "4px", marginBottom: "4px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ fontWeight: 600, fontSize: "12px", color: "var(--text-bright)" }}>{h.sourceName}</div>
                     <div className={`health-status-pill ${h.mode}`}>
                       <span className={`h-dot ${getStatusColorClass(h.mode)}`} />
-                      <span className="h-status-text">{getStatusText(h.mode)}</span>
+                      <span className="h-status-text" style={{ textTransform: "uppercase" }}>{getStatusText(h.mode)}</span>
                     </div>
                   </div>
                   
-                  <div className="health-detail-drawer">
-                    <div className="detail-line">
-                      <span className="k">{t("feedSource", lang)}:</span>
-                      <span className="v">{h.attribution}</span>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "8px", fontSize: "10px", color: "var(--text-dim)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      <span style={{ color: "var(--faint)" }}>Status:</span> 
+                      <span style={{ 
+                        color: h.status?.toLowerCase() === "operational" ? "var(--green)" : 
+                               (h.status?.toLowerCase().includes("degrad") || h.status?.toLowerCase().includes("outage")) ? "var(--amber)" : "var(--text-dim)",
+                        fontWeight: 600,
+                        textTransform: "uppercase" 
+                      }}>
+                        {h.status || "UNKNOWN"}
+                      </span>
                     </div>
-                    <div className="detail-line">
-                      <span className="k">Summary:</span>
-                      <span className="v">{h.summary}</span>
-                    </div>
-                    <div className="detail-line">
-                      <span className="k">{t("lastChecked", lang)}:</span>
-                      <span className="v">{new Date(h.lastCheckedAt).toLocaleTimeString(lang === "es" ? "es-ES" : "en-US")}</span>
-                    </div>
+                    <div><span style={{ color: "var(--faint)" }}>Checked:</span> {new Date(h.lastCheckedAt).toLocaleTimeString(lang === "es" ? "es-ES" : "en-US")}</div>
+                    <div style={{ width: "100%" }}><span style={{ color: "var(--faint)" }}>Source:</span> {h.attribution}</div>
+                  </div>
+                  
+                  <div style={{ marginTop: "8px" }}>
+                    <span style={{ background: "rgba(246, 177, 62, 0.15)", color: "var(--amber)", padding: "2px 6px", borderRadius: "3px", fontSize: "9px", fontWeight: 700, letterSpacing: "0.5px" }}>
+                      {lang === "es" ? "SÓLO CONTEXTO" : "CONTEXT ONLY"}
+                    </span>
                   </div>
                 </div>
               ))}

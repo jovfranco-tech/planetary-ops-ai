@@ -1,7 +1,7 @@
 {
   "name": "planetary-operations",
   "private": true,
-  "version": "1.6.0",
+  "version": "1.6.1",
   "type": "module",
   "description": "AI-native decision simulator for global digital infrastructure, cyber resilience, AI dependency resilience and business continuity.",
   "scripts": {

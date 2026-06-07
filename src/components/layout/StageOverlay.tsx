@@ -66,12 +66,7 @@ export function StageOverlay() {
 
       <StageStatus />
 
-      {scenario && (
-        <div className="live-incident">
-          <div className="li-t">{tv(scenario.title, lang)}</div>
-          <div className="li-s">{tv(scenario.summary, lang)}</div>
-        </div>
-      )}
+
 
       <div className="legend">
         {LEGEND.map((l) => (

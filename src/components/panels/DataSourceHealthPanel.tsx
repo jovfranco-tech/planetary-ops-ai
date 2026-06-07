@@ -13,8 +13,8 @@ export function DataSourceHealthPanel() {
 
   return (
     <div className="glass panel-pad health-panel" style={{ flex: "0 0 auto", height: "auto" }}>
-      <div className="phead">
-        <div className="ic" style={{ color: "var(--cyan)", background: "rgba(54, 214, 231, 0.08)" }}>📡</div>
+      <div className="phead" style={{ borderBottom: "1px solid var(--stroke)", paddingBottom: "12px", marginBottom: "12px" }}>
+        <div className="ic" style={{ color: "var(--cyan)", background: "transparent", border: "none", fontSize: "18px" }}>◈</div>
         <div className="grow">
           <div className="tt">{t("pubProviderStatusIntel", lang)}</div>
           <div className="tsub">v1.6.0 Real Public Signals</div>
@@ -55,10 +55,8 @@ export function DataSourceHealthPanel() {
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
                         <div style={{ fontWeight: 600, fontSize: "11px", color: "var(--text)" }}>{h.sourceName}</div>
                         <div style={{
-                          fontFamily: "var(--mono)", fontSize: "9px", fontWeight: 600, padding: "2px 6px", borderRadius: "4px",
-                          background: isOp ? "rgba(91, 224, 168, 0.1)" : "rgba(246, 177, 62, 0.1)",
+                          fontFamily: "var(--mono)", fontSize: "9px", fontWeight: 600, padding: "2px 0",
                           color: isOp ? "var(--green)" : "var(--amber)",
-                          border: `1px solid ${isOp ? "rgba(91, 224, 168, 0.2)" : "rgba(246, 177, 62, 0.2)"}`
                         }}>
                           {h.status || "UNKNOWN"}
                         </div>

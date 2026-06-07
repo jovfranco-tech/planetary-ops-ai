@@ -60,10 +60,6 @@ export function Sidebar() {
         })}
       </div>
 
-      <div className="ai-flag">
-        <b>✦ AI RESILIENCE</b>
-        {t("aiDiff", lang)}
-      </div>
     </div>
   );
 }

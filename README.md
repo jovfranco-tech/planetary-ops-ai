@@ -6,13 +6,12 @@
 
 A portfolio-grade, single-page command center that renders global digital infrastructure on a cinematic 3D globe and lets an executive *simulate* incidents — submarine-cable cuts, cloud-region degradation, identity-provider outages, ransomware, and AI-provider failures — then see the projected impact on resilience, continuity, AI dependency and cyber risk, with board-ready decision options and a deterministic AI copilot.
 
-> **Demo environment.** All infrastructure, providers, workflows and metrics are **simulated**. No real company-sensitive data is used, and there is no real-time production monitoring. AI recommendations are decision-support only; human validation is required for real operations.
+> **Demo environment.** Scenario impact and enterprise metrics are **simulated**. Public provider status intelligence uses live/reference feeds for operational context. No real company-sensitive data is used, and there is no real-time tenant-specific monitoring. AI recommendations are decision-support only; human validation is required for real operations.
 
 ---
 
 ## 📸 Premium Showcase (Portfolio Screenshots)
 
-> **Note to developer**: Replace the placeholder image paths below with your actual high-resolution screenshots. 
 
 ### 1. Planetary Command Center (Nominal State)
 ![Global Command Center Overview - 3D Globe](public/screenshots/01-home-globe.png)
@@ -38,7 +37,7 @@ Most "ops dashboards" stop at telemetry. This project models the layer above tel
 - **Executive War Room** — animated resilience / continuity / AI-dependency / cyber-risk metrics, posture and recommended decision.
 - **AI Dependency Resilience module** — provider concentration bars, fallback readiness, and a workflow-continuity matrix with approval gating.
 - **Executive Decision Board** — an always-present A / B / C decision matrix (Monitor · Partial continuity/AI fallback · Full DR/multi-provider failover) plus an auto-generated **Board Brief**.
-- **Deterministic AI Copilot** — natural-language commands ("simulate OpenAI outage", "what requires human approval?") resolved by an intent matcher into structured executive reports. No real LLM; fully offline and reproducible.
+- **Deterministic AI Copilot** — natural-language commands ("simulate OpenAI outage", "what requires human approval?") resolved by an intent matcher into structured executive reports. Falls back to a deterministic engine offline.
 - **Bilingual (EN / ES)** — every string localized; language persists across sessions.
 
 ## Architecture
@@ -113,7 +112,7 @@ All serverless functions are configured with Edge Caching headers (`Cache-Contro
 
 ## Data honesty / demo disclaimer
 
-All infrastructure, providers, workflows, and metrics are **simulated**. No real company-sensitive data is used, and there is no real-time production monitoring. AI recommendations are decision-support only; human validation is required for real operations. The simulator highlights provider-concentration risk, multi-model fallback strategy, and responsible AI governance (human-in-the-loop, sensitivity gating) made visible at board level.
+Scenario impact and enterprise metrics are **simulated**. Public provider status intelligence uses live/reference feeds for operational context. No real company-sensitive data is used, and there is no real-time tenant-specific monitoring. AI recommendations are decision-support only; human validation is required for real operations. The simulator highlights provider-concentration risk, multi-model fallback strategy, and responsible AI governance (human-in-the-loop, sensitivity gating) made visible at board level.
 
 ## Roadmap
 

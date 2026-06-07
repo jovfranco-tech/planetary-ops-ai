@@ -74,19 +74,6 @@ export function CommandGlobe() {
   const combinedRings = useMemo(() => [...data.rings, ...liveData.rings], [data.rings, liveData.rings]);
   const combinedArcs = useMemo(() => [...data.arcs, ...liveData.arcs], [data.arcs, liveData.arcs]);
 
-  // DEBUG: Log point counts to verify footprint is being projected
-  const fpCount = combinedPoints.filter(p => p.id.startsWith("fp-") || p.id.startsWith("hub-")).length;
-  if (typeof window !== "undefined") {
-    (window as unknown as Record<string, unknown>).__FOOTPRINT_DEBUG__ = {
-      staticPoints: data.points.length,
-      livePoints: liveData.points.length,
-      combinedPoints: combinedPoints.length,
-      footprintPoints: fpCount,
-      layerActive: layers.has("enterprise-footprint"),
-      allLayerIds: [...layers],
-    };
-  }
-
 
   /* Track container size. */
   useEffect(() => {
@@ -194,14 +181,6 @@ export function CommandGlobe() {
       <OrbitLayer visible={layers.has("space")} />
       <DataModeLegend />
       <EnterpriseFootprintOverlay />
-      {/* DEBUG: visible point counter — remove after visual verification */}
-      <div style={{
-        position: "absolute", bottom: 8, left: "50%", transform: "translateX(-50%)",
-        zIndex: 30, background: "rgba(255,0,0,0.85)", color: "#fff", fontSize: "11px",
-        fontFamily: "monospace", padding: "6px 14px", borderRadius: "6px", pointerEvents: "none"
-      }}>
-        FOOTPRINT DEBUG: {fpCount} footprint pts | {combinedPoints.length} total pts | layer: {layers.has("enterprise-footprint") ? "ON" : "OFF"}
-      </div>
       <div className="stage-vignette" />
       {!supported && (
         <div className="globe-fallback">

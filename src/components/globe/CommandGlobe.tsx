@@ -6,6 +6,7 @@ import { projectGlobe } from "../../engine/globeProjection";
 import { projectLiveGlobe } from "../../engine/liveGlobeProjection";
 import { getScenario } from "../../engine/scenarioEngine";
 import * as THREE from "three";
+import { VRButton } from "three/examples/jsm/webxr/VRButton.js";
 import { OrbitLayer } from "./OrbitLayer";
 import { DataModeLegend } from "./DataModeLegend";
 import { EnterpriseFootprintOverlay } from "./EnterpriseFootprintOverlay";
@@ -151,9 +152,55 @@ export function CommandGlobe() {
           o.intensity = 0.15; // Deep shadow on the night side
         }
       });
+      // Add Cloud Layer
+      let cloudMesh = scene.getObjectByName("cloudLayer") as THREE.Mesh;
+      if (!cloudMesh) {
+        // Radius slightly larger than the globe
+        const cloudGeo = new THREE.SphereGeometry(g.getGlobeRadius() * 1.012, 64, 64);
+        const cloudMat = new THREE.MeshPhongMaterial({
+          map: new THREE.TextureLoader().load("https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png"),
+          transparent: true,
+          opacity: 0.55,
+          blending: THREE.AdditiveBlending,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+        cloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
+        cloudMesh.name = "cloudLayer";
+        scene.add(cloudMesh);
+      }
+
+      // Setup WebXR
+      const renderer = g.renderer();
+      if (renderer && !renderer.xr.enabled) {
+        renderer.xr.enabled = true;
+        const btn = VRButton.createButton(renderer);
+        btn.style.position = "absolute";
+        btn.style.bottom = "20px";
+        btn.style.right = "20px";
+        btn.style.zIndex = "9999";
+        btn.style.fontFamily = "var(--mono)";
+        hostRef.current?.appendChild(btn);
+      }
     } catch {
-      /* lighting tweak is best-effort */
+      /* lighting/xr tweak is best-effort */
     }
+
+    // Cloud rotation loop
+    let animationFrameId: number;
+    const animateClouds = () => {
+      const scene = globeRef.current?.scene();
+      const clouds = scene?.getObjectByName("cloudLayer");
+      if (clouds) {
+        clouds.rotation.y += 0.0004; // Rotate slightly faster than earth
+      }
+      animationFrameId = requestAnimationFrame(animateClouds);
+    };
+    animateClouds();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
   }, [supported, size.width]);
 
   /* React to focus requests. */

@@ -1,30 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { CopilotMessage } from "../../types/ai";
 import { useCommandCenterStore, useScenario, useMetrics } from "../../store/useCommandCenterStore";
-import { useDataSourceStore } from "../../dataSources/useDataSources";
 import { runCopilot } from "../../ai";
+import { runGeminiCopilot } from "../../ai/geminiCopilot";
 import { t } from "../../i18n";
 import { CopilotResponseCard } from "./CopilotResponseCard";
 import { CopilotCommandInput } from "./CopilotCommandInput";
-import type { AgentOutput } from "../../server/llm/types";
-
-function mapAgentOutputToReport(out: AgentOutput, lang: "en"|"es") {
-  return {
-    title: out.intent.toUpperCase() + " / LLM",
-    level: out.riskLevel,
-    lines: [
-      { k: lang === "es" ? "Resumen Ejecutivo" : "Executive Summary", v: out.executiveSummary },
-      { k: lang === "es" ? "Regiones" : "Regions", v: out.affectedRegions.join(", ") || "-" },
-      { k: lang === "es" ? "Servicios" : "Services", v: out.affectedServices.join(", ") || "-" },
-      { k: lang === "es" ? "IAs/Workflows" : "AI/Workflows", v: out.affectedAIWorkflows.join(", ") || "-" },
-      { k: lang === "es" ? "Impacto Negocio" : "Business Impact", v: out.businessImpact },
-      { k: lang === "es" ? "Acción Sugerida" : "Suggested Action", v: out.recommendedAction },
-      { k: lang === "es" ? "Requiere Aprobación" : "Approval Required", v: out.humanApprovalRequired ? (lang === "es" ? "SÍ" : "YES") : "NO", lvl: out.humanApprovalRequired ? "critical" : undefined },
-      { k: "48h", v: out.next48Hours.join("; ") || "-" }
-    ]
-  };
-}
-
 /** Simulated typing latency, in ms. */
 const TYPING_DELAY = 620;
 
@@ -37,7 +18,6 @@ export function AICopilot() {
   const clearScenario = useCommandCenterStore((s) => s.clearScenario);
   const scenario = useScenario();
   const metrics = useMetrics();
-  const signals = useDataSourceStore((s) => s.signals);
 
   const greeting = t("copilotGreeting", lang);
   const [messages, setMessages] = useState<CopilotMessage[]>([{ from: "bot", text: greeting }]);
@@ -89,37 +69,21 @@ export function AICopilot() {
 
     const callAgent = async () => {
       try {
-        const controller = new AbortController();
-        const id = setTimeout(() => controller.abort(), 10000); // 10s timeout from frontend
+        const result = await runGeminiCopilot(trimmed, { metrics, scenario }, lang);
         
-        const payload = {
-          text: trimmed,
-          lang,
-          context: {
-            activeScenarioId: scenario?.id,
-            currentMetrics: metrics,
-            affectedRegions: scenario?.affectedRegions,
-            affectedServices: scenario?.affectedServices,
-            realPublicSignals: signals,
-          }
-        };
+        if (!result) {
+          throw new Error("Gemini fallback triggered");
+        }
 
-        const res = await fetch("/api/agent", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-        clearTimeout(id);
-
-        if (!res.ok) throw new Error("Agent endpoint returned " + res.status);
-        const data = await res.json() as AgentOutput & { error?: string };
-        
-        if (data.mode === "fallback" || data.error) throw new Error("Agent explicitly requested fallback or failed");
+        if (result.command.id === "action") {
+          clearScenario();
+        }
 
         setMessages((m) => [
           ...m,
-          { from: "bot", report: mapAgentOutputToReport(data, lang), mode: "llm" }
+          result.report 
+            ? { from: "bot", report: result.report, mode: "llm" }
+            : { from: "bot", text: result.note, mode: "llm" }
         ]);
         setTyping(false);
       } catch (e) {

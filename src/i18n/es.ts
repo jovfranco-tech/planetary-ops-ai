@@ -166,9 +166,25 @@ export const es: Record<TranslationKey, string | readonly string[]> = {
   scenarioActiveBanner: "Simulación de escenario activa — las fuentes en vivo sólo proveen contexto.",
 
   copyBrief: "Copiar brief ejecutivo",
-  copySnapshot: "Copiar snapshot ejecutivo",
+  copySnapshot: "Copiar Snapshot Ejecutivo",
   downloadMd: "Descargar Markdown",
   copied: "✓ Copiado",
+
+  pubProviderStatusIntel: "Inteligencia de Estado Público de Proveedores",
+  pubCloudStatus: "Estado Cloud Público",
+  pubAiStatus: "Estado de Proveedores de IA",
+  pubSaasStatus: "Estado SaaS / Enterprise",
+  pubInternetSignals: "Señales de Internet",
+  pubProviderStatus: "Estado público del proveedor",
+  entImpactModeled: "Impacto empresarial modelado",
+  contextOnlyLabel: "Sólo contexto",
+  publicSource: "Fuente pública",
+  pubReference: "Referencia",
+  pubUnavailable: "No disponible",
+  lastChecked: "Última verificación",
+  scenarioStatusBoundary: "Estado público: operativo/referencia. Escenario: degradación simulada.",
+  scenarioBoundaryDesc: "Las señales públicas muestran el estado de proveedores. El motor de escenarios modela el impacto empresarial.",
+  pubStatusContextGlobe: "Sólo estado público del proveedor. El impacto empresarial se modela mediante escenarios.",
 
   disclaimers: [
     "Datos simulados de infraestructura combinados con feeds reales de datos públicos opcionales.",

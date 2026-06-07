@@ -5,8 +5,8 @@ export function buildMarkdownSnapshot(snap: ExecutiveSnapshot): string {
   const { lang, scenario, metrics, brief, recommendedId, timestamp, signals } = snap;
 
   const disclaimer = lang === "es"
-    ? "> **Entorno de demostración.** La infraestructura, los flujos y los modelos de decisión son simulados. Las fuentes en vivo/contextuales, cuando están disponibles, sólo se usan como contexto operativo. Se requiere validación humana para operaciones reales."
-    : "> **Demo environment.** Infrastructure, workflows and decision models are simulated. Live/contextual feeds, when available, are used for situational awareness only. Human validation is required for real operations.";
+    ? "> **Entorno de demostración.** La infraestructura, los flujos y los modelos de decisión son simulados. Las señales públicas muestran el estado de proveedores. El motor de escenarios modela el impacto empresarial. Se requiere validación humana para operaciones reales."
+    : "> **Demo environment.** Infrastructure, workflows and decision models are simulated. Public signals show provider status. Scenario engine models enterprise impact. Human validation is required for real operations.";
 
   const title = lang === "es" ? "Snapshot Ejecutivo" : "Executive Snapshot";
   const scenarioTitle = scenario ? tv(scenario.title, lang) : t("nominal", lang);
@@ -42,10 +42,19 @@ export function buildMarkdownSnapshot(snap: ExecutiveSnapshot): string {
   }
 
 
-  md += `## Real Public Signals (Context Only)\n`;
+  const signalsTitle = lang === "es" ? "Inteligencia de Estado Público de Proveedores (Sólo Contexto)" : "Public Provider Status Intelligence (Context Only)";
+  md += `## ${signalsTitle}\n`;
+  
   if (signals && signals.length > 0) {
-    signals.forEach(s => {
-      md += `- **[${s.mode.toUpperCase()}] ${s.sourceName}**: ${s.summary} *(Checked: ${new Date(s.lastCheckedAt).toUTCString()})*\n`;
+    const categories = ["cloud", "ai", "saas", "identity", "data-platform", "collaboration", "developer-platform", "network", "space", "platform"];
+    categories.forEach(cat => {
+      const catSignals = signals.filter(s => s.category === cat);
+      if (catSignals.length > 0) {
+        md += `\n### ${cat.toUpperCase()}\n`;
+        catSignals.forEach(s => {
+          md += `- **[${s.mode.toUpperCase()}] ${s.sourceName}**: ${s.summary} *(Checked: ${new Date(s.lastCheckedAt).toUTCString()})*\n`;
+        });
+      }
     });
   } else {
     md += `- No signals available.\n`;

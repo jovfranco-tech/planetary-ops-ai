@@ -8,6 +8,8 @@ interface DataSourceStore {
   outages: RealOutage[];
   satellites: RealSatellite[];
   aiProviders: RealAIProviderStatus[];
+  cloudProviders: any[];
+  saasProviders: any[];
   isLoading: boolean;
   lastFetchTime: string | null;
   fetchDataSources: () => Promise<void>;
@@ -18,6 +20,8 @@ export const useDataSourceStore = create<DataSourceStore>((set, get) => ({
   outages: [],
   satellites: [],
   aiProviders: [],
+  cloudProviders: [],
+  saasProviders: [],
   isLoading: false,
   lastFetchTime: null,
 
@@ -33,6 +37,8 @@ export const useDataSourceStore = create<DataSourceStore>((set, get) => ({
         outages: res.rawOutages,
         satellites: res.rawSatellites,
         aiProviders: res.rawAiProviders,
+        cloudProviders: res.rawCloudProviders,
+        saasProviders: res.rawSaaSProviders,
         lastFetchTime: new Date().toISOString(),
         isLoading: false
       });

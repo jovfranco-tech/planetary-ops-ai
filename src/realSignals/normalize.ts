@@ -95,46 +95,40 @@ export function normalizeHealth(apiData: any): RealPublicSignal[] {
   }];
 }
 
-export function getCloudProviderReferences(): RealPublicSignal[] {
-  return [
-    {
-      id: "ref-aws",
-      sourceName: "AWS Health",
-      category: "cloud",
-      mode: "reference",
-      lastCheckedAt: new Date().toISOString(),
-      attribution: "https://health.aws.amazon.com",
-      confidence: "medium",
-      summary: "Reference link only. Live parsing disabled.",
-      affectsGlobe: false,
-      affectsDecisionModel: false,
-      contextOnly: true
-    },
-    {
-      id: "ref-gcp",
-      sourceName: "Google Cloud Status",
-      category: "cloud",
-      mode: "reference",
-      lastCheckedAt: new Date().toISOString(),
-      attribution: "https://status.cloud.google.com",
-      confidence: "medium",
-      summary: "Reference link only. Live parsing disabled.",
-      affectsGlobe: false,
-      affectsDecisionModel: false,
-      contextOnly: true
-    },
-    {
-      id: "ref-azure",
-      sourceName: "Azure Status",
-      category: "cloud",
-      mode: "reference",
-      lastCheckedAt: new Date().toISOString(),
-      attribution: "https://status.azure.com",
-      confidence: "medium",
-      summary: "Reference link only. Live parsing disabled.",
-      affectsGlobe: false,
-      affectsDecisionModel: false,
-      contextOnly: true
-    }
-  ];
+export function normalizeCloudStatus(apiData: any): RealPublicSignal[] {
+  if (!apiData || !apiData.providers) return [];
+  
+  return apiData.providers.map((p: any) => ({
+    id: `cloud-${p.id}`,
+    sourceName: p.name,
+    category: "cloud",
+    mode: p.sourceMode as SignalMode,
+    lastCheckedAt: p.lastCheckedAt || new Date().toISOString(),
+    attribution: p.attribution,
+    confidence: p.sourceMode === "live" ? "high" : "medium",
+    summary: `${p.name} status: ${p.status || "Reference mode"}`,
+    normalizedSeverity: "low",
+    affectsGlobe: false,
+    affectsDecisionModel: false,
+    contextOnly: true
+  }));
+}
+
+export function normalizeSaaSStatus(apiData: any): RealPublicSignal[] {
+  if (!apiData || !apiData.providers) return [];
+  
+  return apiData.providers.map((p: any) => ({
+    id: `saas-${p.id}`,
+    sourceName: p.name,
+    category: p.category,
+    mode: p.sourceMode as SignalMode,
+    lastCheckedAt: p.lastCheckedAt || new Date().toISOString(),
+    attribution: p.attribution,
+    confidence: "medium",
+    summary: `${p.name} status: ${p.status || "Reference mode"}`,
+    normalizedSeverity: "low",
+    affectsGlobe: false,
+    affectsDecisionModel: false,
+    contextOnly: true
+  }));
 }

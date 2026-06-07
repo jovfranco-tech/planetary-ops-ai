@@ -49,6 +49,7 @@ export function CommandGlobe() {
   const aiProviders = useDataSourceStore((s) => s.aiProviders);
   const satellites = useDataSourceStore((s) => s.satellites);
   const outages = useDataSourceStore((s) => s.outages);
+  const cloudProviders = useDataSourceStore((s) => s.cloudProviders);
 
   const [timeTick, setTimeTick] = useState(0);
 
@@ -64,8 +65,8 @@ export function CommandGlobe() {
   );
 
   const liveData = useMemo(
-    () => projectLiveGlobe({ layers, scenario, lang, outages, satellites, aiProviders }),
-    [layers, scenario, lang, outages, satellites, aiProviders, timeTick]
+    () => projectLiveGlobe({ layers, scenario, lang, outages, satellites, aiProviders, cloudProviders }),
+    [layers, scenario, lang, outages, satellites, aiProviders, cloudProviders, timeTick]
   );
 
   const combinedPoints = useMemo(() => [...data.points, ...liveData.points], [data.points, liveData.points]);

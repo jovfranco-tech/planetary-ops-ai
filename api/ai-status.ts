@@ -8,7 +8,8 @@ const DEFAULT_PROVIDERS = [
     status: "operational",
     sourceMode: "unavailable",
     lastCheckedAt: new Date().toISOString(),
-    attribution: "https://status.openai.com"
+    attribution: "https://status.openai.com",
+    components: []
   },
   {
     id: "anthropic",
@@ -16,15 +17,26 @@ const DEFAULT_PROVIDERS = [
     status: "operational",
     sourceMode: "unavailable",
     lastCheckedAt: new Date().toISOString(),
-    attribution: "https://status.anthropic.com"
+    attribution: "https://status.anthropic.com",
+    components: []
   },
   {
     id: "gemini",
-    name: "Google Gemini / Google AI",
+    name: "Google Gemini / AI Studio",
     status: "operational",
     sourceMode: "reference",
     lastCheckedAt: new Date().toISOString(),
-    attribution: "https://status.cloud.google.com"
+    attribution: "https://status.cloud.google.com",
+    components: []
+  },
+  {
+    id: "vertex-ai",
+    name: "Google Vertex AI Gemini",
+    status: "operational",
+    sourceMode: "reference",
+    lastCheckedAt: new Date().toISOString(),
+    attribution: "https://status.cloud.google.com",
+    components: []
   },
   {
     id: "ms-copilot",
@@ -32,7 +44,8 @@ const DEFAULT_PROVIDERS = [
     status: "operational",
     sourceMode: "reference",
     lastCheckedAt: new Date().toISOString(),
-    attribution: "https://status.office.com"
+    attribution: "https://status.office.com",
+    components: []
   },
   {
     id: "github-copilot",
@@ -40,7 +53,8 @@ const DEFAULT_PROVIDERS = [
     status: "operational",
     sourceMode: "unavailable",
     lastCheckedAt: new Date().toISOString(),
-    attribution: "https://www.githubstatus.com"
+    attribution: "https://www.githubstatus.com",
+    components: []
   },
   {
     id: "azure-openai",
@@ -48,7 +62,17 @@ const DEFAULT_PROVIDERS = [
     status: "operational",
     sourceMode: "reference",
     lastCheckedAt: new Date().toISOString(),
-    attribution: "https://status.azure.com"
+    attribution: "https://status.azure.com",
+    components: []
+  },
+  {
+    id: "local-ai",
+    name: "Local / Private AI",
+    status: "unknown",
+    sourceMode: "reference",
+    lastCheckedAt: new Date().toISOString(),
+    attribution: "Local self-controlled infrastructure",
+    components: []
   }
 ];
 
@@ -79,7 +103,12 @@ async function fetchStatuspage(url: string, signal: AbortSignal) {
   
   return {
     status: mapIndicator(indicator),
-    summary: description
+    summary: description,
+    components: (json.components || []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      status: c.status === "operational" ? "operational" : "degraded" // Simplification
+    }))
   };
 }
 
@@ -111,21 +140,32 @@ export default async function handler(
       let attribution = p.attribution;
       let sourceMode = p.sourceMode; // default from above (unavailable or reference)
 
+      let components = p.components || [];
+
       if (p.id === "openai" && openAIResult.status === "fulfilled") {
         statusInfo = openAIResult.value;
         attribution = "OpenAI Statuspage API";
         sourceMode = "live";
         hasLiveFeeds = true;
+        components = statusInfo.components.filter((c: any) => 
+          ["ChatGPT", "API", "Assistants", "Codex"].some(target => c.name.includes(target))
+        );
       } else if (p.id === "anthropic" && anthropicResult.status === "fulfilled") {
         statusInfo = anthropicResult.value;
         attribution = "Anthropic Statuspage API";
         sourceMode = "live";
         hasLiveFeeds = true;
+        components = statusInfo.components.filter((c: any) => 
+          ["Claude.ai", "API", "Console"].some(target => c.name.includes(target))
+        );
       } else if (p.id === "github-copilot" && githubResult.status === "fulfilled") {
         statusInfo = githubResult.value;
         attribution = "GitHub Statuspage API";
         sourceMode = "live";
         hasLiveFeeds = true;
+        components = statusInfo.components.filter((c: any) => 
+          ["GitHub Copilot", "GitHub Actions", "GitHub.com"].some(target => c.name === target)
+        );
       }
 
       return {
@@ -135,7 +175,8 @@ export default async function handler(
         sourceMode: sourceMode,
         lastIncidentSummary: statusInfo ? statusInfo.summary : undefined,
         lastCheckedAt: new Date().toISOString(),
-        attribution: attribution
+        attribution: attribution,
+        components: components
       };
     });
 

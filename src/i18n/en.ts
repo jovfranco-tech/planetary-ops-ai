@@ -168,6 +168,22 @@ export const en = {
   downloadMd: "Download Markdown",
   copied: "✓ Copied",
 
+  pubProviderStatusIntel: "Public Provider Status Intelligence",
+  pubCloudStatus: "Public Cloud Status",
+  pubAiStatus: "AI Provider Status",
+  pubSaasStatus: "SaaS / Enterprise Status",
+  pubInternetSignals: "Internet Signals",
+  pubProviderStatus: "Public provider status",
+  entImpactModeled: "Enterprise impact modeled",
+  contextOnlyLabel: "Context only",
+  publicSource: "Public source",
+  pubReference: "Reference",
+  pubUnavailable: "Unavailable",
+  lastChecked: "Last checked",
+  scenarioStatusBoundary: "Public status: operational/reference. Scenario: simulated degradation.",
+  scenarioBoundaryDesc: "Public signals show provider status. Scenario engine models enterprise impact.",
+  pubStatusContextGlobe: "Public provider status only. Enterprise impact is scenario-modeled.",
+
   disclaimers: [
     "Simulated infrastructure & AI-dependency data combined with optional real-world public data feeds.",
     "No real company-sensitive data is used.",

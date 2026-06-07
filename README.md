@@ -127,6 +127,13 @@ Further directions: real telemetry ingestion to replace simulated baselines, sce
 
 ## Release notes
 
+### v1.6.0 — Real Public Infrastructure & Provider Status
+
+- **Broad Provider Intelligence**: Added live/reference intelligence for major Cloud (AWS, GCP, Azure) and SaaS (M365, Salesforce, Okta, Cloudflare, etc) providers via serverless API routes.
+- **Deep Globe Integration**: Mapped AWS, GCP, and Azure public regions directly onto the 3D globe. Regions display status changes organically. 
+- **Scenario Alignment**: Updated the scenario simulation engine to map abstract degradation scenarios directly to real-world cloud regions (us-east-1, eastus, us-east1) and provider dependencies.
+- **Explicit Context Boundaries**: Visually decoupled public reference data from scenario simulations on the Globe, Copilot, Executive Export, and Data Feeds panel via bold disclaimer tooltips and UI components ("Context only", "Public signals show provider status. Scenario engine models enterprise impact").
+
 ### v1.5.0 — Real Public Signals Layer
 
 - **Unified Public Signal Engine**: Replaced ad-hoc `DataSourceHealth` structure with a unified `RealPublicSignal` engine. The platform now aggregates AWS, Google Cloud, Azure, Cloudflare Radar, CelesTrak, and Vercel Health into a single deterministic format.

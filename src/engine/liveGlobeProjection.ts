@@ -17,6 +17,7 @@ interface LiveGlobeInput {
   outages: RealOutage[];
   satellites: RealSatellite[];
   aiProviders: RealAIProviderStatus[];
+  cloudProviders: any[];
 }
 
 interface LiveGlobeData {
@@ -26,7 +27,7 @@ interface LiveGlobeData {
 }
 
 export function projectLiveGlobe(input: LiveGlobeInput): LiveGlobeData {
-  const { layers, lang, outages, satellites, aiProviders } = input;
+  const { layers, lang, outages, satellites, aiProviders, cloudProviders, scenario } = input;
   
   const points: GlobePoint[] = [];
   const rings: GlobeRing[] = [];
@@ -160,6 +161,100 @@ export function projectLiveGlobe(input: LiveGlobeInput): LiveGlobeData {
         });
       }
     });
+  }
+
+  // 3.5 Cloud Providers (Infrastructure/Core Layer)
+  if (layers.has("backbone") || layers.has("cyber") || true) { // Display on base
+    const REGION_COORDS: Record<string, {lat: number, lng: number}> = {
+      // AWS
+      "us-east-1": { lat: 38.0, lng: -78.0 },
+      "us-east-2": { lat: 40.0, lng: -83.0 },
+      "us-west-2": { lat: 45.0, lng: -119.0 },
+      "eu-west-1": { lat: 53.0, lng: -8.0 },
+      "eu-central-1": { lat: 50.1, lng: 8.6 },
+      "sa-east-1": { lat: -23.5, lng: -46.6 },
+      "ap-south-1": { lat: 19.0, lng: 72.8 },
+      "ap-southeast-1": { lat: 1.3, lng: 103.8 },
+      // Azure
+      "eastus": { lat: 37.3, lng: -79.8 },
+      "eastus2": { lat: 36.6, lng: -78.3 },
+      "westus3": { lat: 33.4, lng: -112.0 },
+      "brazilsouth": { lat: -23.5, lng: -46.6 }, // Offset slightly from sa-east-1 below visually if needed
+      "westeurope": { lat: 52.3, lng: 4.9 },
+      "northeurope": { lat: 53.3, lng: -6.2 },
+      "centralindia": { lat: 18.5, lng: 73.8 },
+      "southeastasia": { lat: 1.3, lng: 103.8 },
+      // GCP
+      "us-central1": { lat: 41.2, lng: -95.8 },
+      "us-east1": { lat: 33.2, lng: -80.0 },
+      "us-east4": { lat: 39.0, lng: -77.5 },
+      "southamerica-east1": { lat: -23.5, lng: -46.6 },
+      "europe-west1": { lat: 50.4, lng: 3.8 },
+      "europe-west3": { lat: 50.1, lng: 8.6 },
+      "asia-south1": { lat: 19.0, lng: 72.8 },
+      "asia-southeast1": { lat: 1.3, lng: 103.8 }
+    };
+
+    if (cloudProviders) {
+      cloudProviders.forEach((prov: any) => {
+        if (prov.regions) {
+          prov.regions.forEach((r: any) => {
+            const coords = REGION_COORDS[r.id];
+            if (!coords) return; // Unknown region
+
+            // Slight random offset to prevent exact overlap
+            const hash = r.id.split("").reduce((a: number, b: string) => a + b.charCodeAt(0), 0);
+            const lat = coords.lat + ((hash % 10) - 5) * 0.2;
+            const lng = coords.lng + ((hash % 12) - 6) * 0.2;
+
+            const isLive = prov.sourceMode === "live";
+            let isDegraded = r.status !== "operational" && r.status !== "unknown";
+            let isScenarioDegraded = false;
+
+            if (scenario && scenario.affectedRegions.some((reg: string) => reg === r.id || reg === prov.id || r.id.includes(reg))) {
+              isDegraded = true;
+              isScenarioDegraded = true;
+            }
+
+            let pointColor: string = COLORS.violet;
+            if (prov.sourceMode === "reference") pointColor = "rgba(100, 150, 255, 0.8)";
+            if (isLive) pointColor = COLORS.cyan;
+            if (isDegraded) pointColor = COLORS.amber;
+            
+            let tipModeDesc = r.sourceMode || prov.sourceMode;
+            let tipBoundary = tFunc("pubStatusContextGlobe" as TranslationKey, lang) as string;
+
+            if (isScenarioDegraded) {
+              tipBoundary = tFunc("scenarioStatusBoundary" as TranslationKey, lang) as string;
+            }
+
+            points.push({
+              id: `cloud-${prov.id}-${r.id}`,
+              lat,
+              lng,
+              color: pointColor,
+              alt: 0.05,
+              rad: 0.4,
+              tip: buildTip(
+                `CLOUD REGION: ${prov.name}`,
+                r.name,
+                tipModeDesc,
+                prov.attribution,
+                prov.lastCheckedAt
+              ).replace(tFunc("notAffectDecision" as TranslationKey, lang) as string, tipBoundary)
+            });
+
+            if (isDegraded) {
+              rings.push({
+                lat, lng,
+                ringColor: ringFade(COLORS.amber),
+                maxR: 2.0, speed: 1.2, period: 1200
+              });
+            }
+          });
+        }
+      });
+    }
   }
 
   // 4. Curated Submarine Cables (Backbone Layer)

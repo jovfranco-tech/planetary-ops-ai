@@ -73,8 +73,8 @@ export const SCENARIOS: Scenario[] = [
     },
     affectedRoutes: ["r1", "r3", "r7"],
     reroute: ["r4"],
-    degradedNodes: ["iad"],
-    affectedRegions: ["iad", "mex", "sao", "lon"],
+    degradedNodes: ["iad", "us-east-1", "eastus", "us-east1"],
+    affectedRegions: ["iad", "us-east-1", "eastus", "eastus2", "us-east1", "us-east4", "mex", "sao", "lon"],
     affectedServices: ["iam", "crm", "anly", "data", "exec"],
     aiWorkflows: ["brief", "support", "runbook"],
     businessImpact: {
@@ -178,8 +178,8 @@ export const SCENARIOS: Scenario[] = [
     },
     affectedRoutes: ["a1"],
     reroute: ["a2", "a3"],
-    degradedNodes: ["ai_usw"],
-    affectedRegions: ["iad", "dal"],
+    degradedNodes: ["ai_usw", "openai"],
+    affectedRegions: ["iad", "dal", "openai"],
     affectedServices: ["exec", "cs", "anly"],
     aiWorkflows: ["brief", "support", "sales"],
     businessImpact: {
@@ -213,8 +213,8 @@ export const SCENARIOS: Scenario[] = [
     },
     affectedRoutes: ["a2"],
     reroute: ["a1", "a3"],
-    degradedNodes: ["ai_usc"],
-    affectedRegions: ["blr", "bom", "dal"],
+    degradedNodes: ["ai_usc", "github-copilot"],
+    affectedRegions: ["blr", "bom", "dal", "github-copilot"],
     affectedServices: ["dev"],
     aiWorkflows: ["code"],
     businessImpact: {
@@ -248,8 +248,8 @@ export const SCENARIOS: Scenario[] = [
     },
     affectedRoutes: ["a1", "a2"],
     reroute: ["a3"],
-    degradedNodes: ["ai_usw", "ai_usc"],
-    affectedRegions: ["iad", "dal", "fra"],
+    degradedNodes: ["ai_usw", "ai_usc", "openai", "anthropic"],
+    affectedRegions: ["iad", "dal", "fra", "openai", "anthropic"],
     affectedServices: ["exec", "cs", "dev", "anly", "aigov"],
     aiWorkflows: ["brief", "support", "code", "sales", "gov", "doc"],
     businessImpact: {

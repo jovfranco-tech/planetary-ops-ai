@@ -49,17 +49,13 @@ export function DataSourceHealthPanel() {
     }
   };
 
-  const disclaimer = lang === "es" 
-    ? "Las señales públicas reales sólo aportan contexto. El modelado de decisiones sigue siendo simulado."
-    : "Real public signals provide context only. Decision modeling remains simulated.";
-
   return (
     <div className="glass panel-pad health-panel" style={{ flex: "0 0 auto", height: "auto" }}>
       <div className="phead">
         <div className="ic" style={{ color: "var(--cyan)", background: "rgba(54, 214, 231, 0.08)" }}>📡</div>
         <div className="grow">
-          <div className="tt">{t("dataFeeds", lang)}</div>
-          <div className="tsub">v1.5.0 Real Public Signals</div>
+          <div className="tt">{t("pubProviderStatusIntel", lang)}</div>
+          <div className="tsub">v1.6.0 Real Public Signals</div>
         </div>
         <button 
           className="mini-btn refresh-btn" 
@@ -72,44 +68,51 @@ export function DataSourceHealthPanel() {
       </div>
 
       <div style={{ fontSize: "10px", color: "var(--text-dim)", marginBottom: "8px", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "8px" }}>
-        {disclaimer}
+        {t("scenarioBoundaryDesc", lang)}
       </div>
 
       <div className="scroll health-list" style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "240px" }}>
-        {signals.map((h) => (
-          <div key={h.id} className="health-row">
-            <div className="health-meta">
-              <div className="health-name">
-                {h.sourceName}
+        {["cloud", "ai", "saas", "identity", "data-platform", "collaboration", "developer-platform", "network", "space", "platform"].map(category => {
+          const catSignals = signals.filter(s => s.category === category);
+          if (catSignals.length === 0) return null;
+          
+          return (
+            <div key={category} style={{ marginBottom: "8px" }}>
+              <div style={{ fontSize: "9px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "4px", letterSpacing: "1px" }}>
+                {category}
               </div>
-              <div className="health-category">{h.category}</div>
-            </div>
-            
-            <div className="health-status-container">
-              <div className={`health-status-pill ${h.mode}`}>
-                <span className={`h-dot ${getStatusColorClass(h.mode)}`} />
-                <span className="h-status-text">{getStatusText(h.mode)}</span>
-              </div>
-            </div>
-            
-            <div className="health-detail-drawer">
-              <div className="detail-line">
-                <span className="k">{t("feedSource", lang)}:</span>
-                <span className="v">{h.attribution}</span>
-              </div>
-              <div className="detail-line">
-                <span className="k">Summary:</span>
-                <span className="v">{h.summary}</span>
-              </div>
-              {h.mode !== "curated" && h.mode !== "simulated" && h.mode !== "reference" && (
-                <div className="detail-line">
-                  <span className="k">{t("feedUpdated", lang)}:</span>
-                  <span className="v">{new Date(h.lastCheckedAt).toLocaleTimeString(lang === "es" ? "es-ES" : "en-US")}</span>
+              {catSignals.map((h) => (
+                <div key={h.id} className="health-row">
+                  <div className="health-meta">
+                    <div className="health-name">{h.sourceName}</div>
+                  </div>
+                  
+                  <div className="health-status-container">
+                    <div className={`health-status-pill ${h.mode}`}>
+                      <span className={`h-dot ${getStatusColorClass(h.mode)}`} />
+                      <span className="h-status-text">{getStatusText(h.mode)}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="health-detail-drawer">
+                    <div className="detail-line">
+                      <span className="k">{t("feedSource", lang)}:</span>
+                      <span className="v">{h.attribution}</span>
+                    </div>
+                    <div className="detail-line">
+                      <span className="k">Summary:</span>
+                      <span className="v">{h.summary}</span>
+                    </div>
+                    <div className="detail-line">
+                      <span className="k">{t("lastChecked", lang)}:</span>
+                      <span className="v">{new Date(h.lastCheckedAt).toLocaleTimeString(lang === "es" ? "es-ES" : "en-US")}</span>
+                    </div>
+                  </div>
                 </div>
-              )}
+              ))}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

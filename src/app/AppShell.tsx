@@ -1,11 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCommandCenterStore, useMetrics } from "../store/useCommandCenterStore";
 import { TopBar } from "../components/layout/TopBar";
 import { Sidebar } from "../components/layout/Sidebar";
 import { Footer } from "../components/layout/Footer";
 import { StageOverlay } from "../components/layout/StageOverlay";
-import { CommandGlobe } from "../components/globe/CommandGlobe";
 import { ExecutiveWarRoom } from "../components/panels/ExecutiveWarRoom";
 import { AIResiliencePanel } from "../components/panels/AIResiliencePanel";
 import { ScenarioTimeline } from "../components/panels/ScenarioTimeline";
@@ -13,7 +12,9 @@ import { DecisionBoard } from "../components/panels/DecisionBoard";
 import { DemoDisclaimer } from "../components/panels/DemoDisclaimer";
 import { AICopilot } from "../components/copilot/AICopilot";
 import { LiveFeedMonitor } from "../components/ai/LiveFeedMonitor";
-import { GestureController } from "../components/camera/GestureController";
+
+const CommandGlobe = lazy(() => import("../components/globe/CommandGlobe").then(m => ({ default: m.CommandGlobe })));
+const GestureController = lazy(() => import("../components/camera/GestureController").then(m => ({ default: m.GestureController })));
 import { useDataSourceStore } from "../dataSources/useDataSources";
 import { t } from "../i18n";
 import { playAlert, getAudioAmplitude } from "../utils/audio";
@@ -97,8 +98,15 @@ export function AppShell() {
         </AnimatePresence>
 
         <div className="stage">
+          {/* The 3D Engine is heavy, wrap in Suspense */}
+        <Suspense fallback={
+          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", color: "var(--cyan)", fontFamily: "var(--mono)", fontSize: "12px", zIndex: 10 }}>
+            [INITIALIZING 3D ENGINE...]
+          </div>
+        }>
           <CommandGlobe />
-          <StageOverlay />
+        </Suspense>
+        <StageOverlay />
           {scenarioActive && (
             <div className="scenario-active-banner glass" style={{
               position: "absolute",
@@ -177,7 +185,10 @@ export function AppShell() {
 
       <DemoDisclaimer />
       <LiveFeedMonitor />
-      <GestureController />
+      
+      <Suspense fallback={null}>
+        <GestureController />
+      </Suspense>
     </div>
   );
 }

@@ -28,7 +28,7 @@ async function callGemini(apiKey: string, systemPrompt: string, userPrompt: stri
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), 8000); // 8s timeout
 
-  const res = await fetch(\`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=\${apiKey}\`, {
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

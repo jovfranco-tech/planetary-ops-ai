@@ -1,6 +1,7 @@
+import { useState } from "react";
 import type { Language } from "../../types/i18n";
 import type { DecisionOption, DecisionOptionId } from "../../types/scenarios";
-import { useCommandCenterStore, useScenario } from "../../store/useCommandCenterStore";
+import { useCommandCenterStore, useScenario, useMetrics } from "../../store/useCommandCenterStore";
 import {
   GHOST_OPTIONS,
   type GhostOption,
@@ -9,6 +10,9 @@ import {
   recommendedOptionId,
 } from "../../engine/decisionEngine";
 import { generateBoardBrief } from "../../engine/briefingEngine";
+import { generateSnapshot } from "../../engine/snapshotEngine";
+import { buildMarkdownSnapshot } from "../../utils/markdownExport";
+import { useDataSourceStore } from "../../dataSources/useDataSources";
 import { t, tv } from "../../i18n";
 
 function autoClassFor(id: DecisionOptionId): string {
@@ -127,6 +131,41 @@ export function DecisionBoard() {
   const recId = recommendedOptionId(scenario);
   const ghost = !scenario;
   const brief = generateBoardBrief(scenario, lang);
+  const health = useDataSourceStore((s) => s.health);
+  const metrics = useMetrics();
+
+  const [copiedBrief, setCopiedBrief] = useState(false);
+  const [copiedSnap, setCopiedSnap] = useState(false);
+
+  const handleCopyBrief = () => {
+    navigator.clipboard.writeText(brief).then(() => {
+      setCopiedBrief(true);
+      setTimeout(() => setCopiedBrief(false), 2000);
+    });
+  };
+
+  const handleCopySnapshot = () => {
+    const snap = generateSnapshot(scenario, metrics, health, lang);
+    const md = buildMarkdownSnapshot(snap);
+    navigator.clipboard.writeText(md).then(() => {
+      setCopiedSnap(true);
+      setTimeout(() => setCopiedSnap(false), 2000);
+    });
+  };
+
+  const handleDownloadMd = () => {
+    const snap = generateSnapshot(scenario, metrics, health, lang);
+    const md = buildMarkdownSnapshot(snap);
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = scenario ? `planetary-ops-${scenario.id}-snapshot.md` : "planetary-ops-executive-snapshot.md";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="glass decision-pad">
@@ -160,8 +199,21 @@ export function DecisionBoard() {
       <div className="decision-body">
         <div className="board-brief">
           <div className="bb-head">
-            <span className="bb-spark">✦</span>
-            <span className="bb-title">{t("boardBrief", lang)}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span className="bb-spark">✦</span>
+              <span className="bb-title">{t("boardBrief", lang)}</span>
+            </div>
+            <div style={{ display: "flex", gap: 6, marginLeft: "auto" }}>
+              <button className="panel-btn" onClick={handleCopyBrief} style={{ fontSize: 10, padding: "4px 8px" }}>
+                {copiedBrief ? t("copied", lang) : t("copyBrief", lang)}
+              </button>
+              <button className="panel-btn" onClick={handleCopySnapshot} style={{ fontSize: 10, padding: "4px 8px" }}>
+                {copiedSnap ? t("copied", lang) : t("copySnapshot", lang)}
+              </button>
+              <button className="panel-btn" onClick={handleDownloadMd} style={{ fontSize: 10, padding: "4px 8px" }}>
+                {t("downloadMd", lang)}
+              </button>
+            </div>
           </div>
           {scenario && (
             <div className="bb-ribbons">

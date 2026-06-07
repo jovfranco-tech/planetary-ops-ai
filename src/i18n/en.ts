@@ -161,6 +161,11 @@ export const en = {
   curatedDemoRoute: "Curated demo route",
   notOfficialMap: "Not an official/authoritative cable map",
   scenarioActiveBanner: "Scenario simulation active — live feeds provide context only.",
+  
+  copyBrief: "Copy Board Brief",
+  copySnapshot: "Copy Executive Snapshot",
+  downloadMd: "Download Markdown",
+  copied: "✓ Copied",
 
   disclaimers: [
     "Simulated infrastructure & AI-dependency data combined with optional real-world public data feeds.",

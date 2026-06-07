@@ -111,6 +111,13 @@ Further directions: real telemetry ingestion to replace simulated baselines, sce
 
 ## Release notes
 
+### v1.4.0 — Executive Snapshot Export
+
+- **Board-Ready Markdown Export**: Added a one-click capability to export the current command center posture, active scenario metrics, and AI resilience state directly into a well-formatted Markdown document.
+- **Client-Side Generation**: The snapshot engine securely generates the markdown payload locally, ensuring no sensitive simulation data ever leaves the browser.
+- **Copy & Download**: Users can choose to instantly copy the brief, copy the full snapshot to clipboard, or download it as a `.md` file.
+- **Responsible AI Watermarking**: All generated exports are rigidly watermarked with the demo environment disclaimers across English and Spanish.
+
 ### v1.3.0 — Gemini Agent Backend
 
 - **Serverless API Route (`/api/agent`)**: A secure Node.js serverless endpoint validating inputs and outputs using Zod. It acts as the orchestration layer between the React frontend and Gemini/OpenAI/Anthropic APIs.

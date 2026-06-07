@@ -162,7 +162,12 @@ export const es: Record<TranslationKey, string | readonly string[]> = {
   notAffectDecision: "No afecta el modelo de decisión",
   curatedDemoRoute: "Ruta curada de demostración",
   notOfficialMap: "No es un mapa oficial/autoritativo de cables",
-  scenarioActiveBanner: "Simulación de escenario activa — las fuentes en vivo sólo aportan contexto.",
+  scenarioActiveBanner: "Simulación de escenario activa — las fuentes en vivo sólo proveen contexto.",
+
+  copyBrief: "Copiar brief ejecutivo",
+  copySnapshot: "Copiar snapshot ejecutivo",
+  downloadMd: "Descargar Markdown",
+  copied: "✓ Copiado",
 
   disclaimers: [
     "Datos simulados de infraestructura combinados con feeds reales de datos públicos opcionales.",
